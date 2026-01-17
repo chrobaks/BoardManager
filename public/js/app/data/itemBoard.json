@@ -1,0 +1,42 @@
+{
+    "items":[
+        {"id":1,"name":"Item 1","value":"Item 1","description":"Lorem ipsum"},
+        {"id":2,"name":"Item 2","value":"Item 2","description":"Lorem ipsum"},
+        {"id":3,"name":"Item 3","value":"Item 3","description":"Lorem ipsum"},
+        {"id":4,"name":"Item 4","value":"Item 4","description":"Lorem ipsum"},
+        {"id":5,"name":"Item 5","value":"Item 5","description":"Lorem ipsum"}
+    ],
+    "category":[
+        {"id":1,"name":"Core Package","description":"A basic package","version":"1","items":[1,2]},
+        {"id":2,"name":"Test Package","description":"A test package","version":"1","items":[2]},
+        {"id":3,"name":"Public Package","description":"A public package","version":"1","items":[1,2,3]}
+    ],
+    "categoryForm":[
+        {"name":"id","value":0,"element":"input","type":"hidden","title":"Id","selector":"","required":"required"},
+        {"name":"name","element":"input","type":"text","selector":"","title":"Name","required":"required","label":"Name"},
+        {"name":"description","element":"input","type":"text","selector":"","title":"Beschreibung","required":"required","label":"Beschreibung"},
+        {"name":"version","element":"input","type":"text","selector":"","title":"Version","required":"required","label":"Version"},
+        {"name":"items","value":"","element":"select","type":"","title":"Elemente","selector":".one-row-select","options":[],"multiple":"multiple","label":"Elemente"}
+    ],
+    "itemsForm":[
+        {"name":"id","value":0,"element":"input","type":"hidden","title":"Id","selector":"","required":"required"},
+        {"name":"name","element":"input","type":"text","selector":"","title":"Item Name","required":"required","label":"Item Name"},
+        {"name":"value","element":"input","type":"text","selector":"","title":"Item Value","required":"required","label":"Item Value"},
+        {"name":"description","element":"input","type":"text","selector":"","title":"Beschreibung","required":"required","label":"Beschreibung"}
+    ],
+    "typeSchema" : {
+        "category": {
+            "id": "number",
+            "name": "string",
+            "description": "string",
+            "version": "string",
+            "items": "number[]"
+        },
+        "items": {
+            "id": "number",
+            "name": "string",
+            "value": "string",
+            "description": "string"
+        }
+    }
+}

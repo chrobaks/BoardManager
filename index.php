@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BoardManager</title>
+    <link rel="stylesheet" href="public/css/bootstrap-5.3/bootstrap.css">
+    <link rel="stylesheet" href="public/css/fas.min.css">
+    <link rel="stylesheet" href="public/css/app.css">
+    <script src="public/js/bootstrap-5.3/bootstrap.bundle.js"></script>
+    <script type="module" src="public/js/app/App.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div data-component="BoardManager">
+            <div class="row">
+                <div class="col mt-5">
+                    <h1>BoardManager</h1>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 mt-3 container-msg">
+                    <i class="fa fa-info-circle" aria-hidden="true"></i>
+                    <span class="component-msg">Configuration Board</span>
+                </div>
+            </div>
+            <div class="row container-commit d-none">
+                <div class="col-12 mt-3">
+                    <div class="alert alert-primary">
+                        <p><i class="fa fa-info-circle" aria-hidden="true"></i> Sie haben einen ungespeicherten Commit!</p>
+                        <button class="btn btn-primary btn-fa btn-sm"><i class="fa fa-file-import" aria-hidden="true"></i>Neuen Commit speichern</button>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-6 itemboard-wrapper">
+                    <button class="btn btn-primary btn-fa btn-sm mb-3" data-event="category:modal:form"><i class="fa fa-file-import" aria-hidden="true"></i>Neuen Task anlegen</button>
+                    <ul class="content-box-list category"></ul>
+                </div>
+                <div class="col-6 itemboard-wrapper">
+                    <button class="btn btn-primary btn-fa btn-sm mb-3" data-event="item:modal:form"><i class="fa fa-file-import" aria-hidden="true"></i>Neues Item anlegen</button>
+                    <ul class="content-box-list items product"></ul>
+                </div>
+                <script type="application/json" src="public/js/app/data/itemBoard.json" data-source="BoardManager"></script>
+                <template data-template="categoryTemplate" data-source="BoardManager">
+                    <li class="content-box-item" data-item-id="0">
+                        <input type="hidden" value=""  data-item-key="id" data-cache-value="" name="id" title="" class="">
+                        <div class="box-item-icons box-item-top">
+                            <div class="box-item-icon show" data-event="category:show"><i class="fa fa-backward" aria-hidden="true"></i></div>
+                        </div>
+                        <div class="box-item-content">
+                            <h5 class="box-item-icon show" data-event="category:show"><span data-item-key="name"></span></h5>
+                            <div class="box-item-info">
+                                <table><tbody>
+                                    <tr><td><b>Anzahl Elemente:</b></td><td> <span data-item-key="items_length">0</span></td></tr>
+                                    <tr><td><b>Version:</b></td><td><span data-item-key="version"></span></td></tr>
+                                    <tr><td><b>Beschreibung:</b></td><td><span data-item-key="description"></span></td></tr>
+                                    </tbody></table>
+                            </div>
+                        </div>
+                        <div class="box-item-icons box-item-bottom">
+                            <div class="box-item-icon edit" data-event="category:edit"><i class="fa fa-file-import" aria-hidden="true"></i></div>
+                            <div class="box-item-icon delete" data-event="category:delete"><i class="fa fa-trash" aria-hidden="true"></i></div>
+                        </div>
+                    </li>
+                </template>
+                <template data-template="itemsTemplate" data-source="BoardManager">
+                    <li class="content-box-item elements" data-item-id="0">
+                        <input type="hidden" value=""  data-item-key="id" data-cache-value="" name="id" title="" class="">
+                        <div class="box-item-icons box-item-top">
+                            <div class="box-item-icon show" data-event="item:show"><i class="fa fa-backward" aria-hidden="true"></i></div>
+                        </div>
+                        <div class="box-item-content">
+                            <h5 class="box-item-icon show" data-event="item:show"><span data-item-key="name"></span></h5><div class="box-item-info">
+                                <table><tbody>
+                                    <tr><td><b>Beschreibung:</b></td><td><span data-item-key="description"></span></td></tr>
+                                    </tbody></table>
+                            </div>
+                        </div>
+                        <div class="box-item-icons box-item-bottom">
+                            <div class="box-item-icon edit" data-event="item:edit"><i class="fa fa-file-import" aria-hidden="true"></i></div>
+                            <div class="box-item-icon delete" data-event="item:delete"><i class="fa fa-trash" aria-hidden="true"></i></div>
+                        </div>
+                    </li>
+                </template>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

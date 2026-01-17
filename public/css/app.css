@@ -1,0 +1,61 @@
+:root {
+    --background-color: #2b2a33;
+    --background-color-content: #302f39;
+    --background-color-navi: #196fc0;
+    --color-body: #f5f5f5;
+    --color-content: #d8d8e7;
+    --color-orange: #f87103;
+}
+body {
+    font-family: 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-size: 15px;
+    color: var(--color-body);
+    background: var(--background-color-content);
+}
+
+.btn-icon {padding: 3px !important;}
+button.btn-fa i {margin-right: 10px;}
+/* -------------- Board Container -------------- */
+ul.content-box-list {display: flex; justify-content: flex-start;flex-wrap: wrap;width: 100%;margin: 0;padding:2px 0 0 2px ;list-style: none;background-color: transparent !important;border: 1px solid #ccc;border-radius: 0.25rem;}
+ul.content-box-list li {position: relative;border: 1px solid #ccc;border-radius: 0.25rem;min-width: calc((100% / 2) - 2px);margin: 0 2px 3px 0;padding: 10px 0 !important;color: #ccc;background-color: #666 !important;-webkit-user-select: none;-moz-user-select: none;user-select: none;font-size: 1rem;text-align: center;}
+ul.content-box-list.product li {min-width: calc((100% / 3) - 2px) !important;}
+ul.content-box-list li.elements {width: 15%;}
+ul.content-box-list li.show {min-width: calc(100% - 2px);min-height: 300px;display: block !important;}
+ul.content-box-list.product li.show {min-width: calc(100% - 2px) !important;}
+ul.content-box-list li.hidden {display: none !important;}
+ul.content-box-list li h5 {cursor: pointer;line-height: 1.0;min-height: 30px;font-size:0.8rem;text-wrap: nowrap;margin-top: 10px;}
+ul.content-box-list li:hover {border-color: #f5f5f5;color: #f5f5f5;background-color:var(--background-color) !important;}
+ul.content-box-list li.hidden {display: none;}
+.box-item-info {display: none;padding: 0 30px 10px 30px;line-height: 1.6;text-align: left;}
+ul.content-box-list li.show .box-item-info {display: block;}
+.box-item-icons {width: calc(100% - 20px);position: absolute;left:10px;flex-wrap: nowrap;justify-content:space-between;color: #fff;}
+.box-item-icons.box-item-top {top: 10px;display: none;width: auto !important;}
+ul.content-box-list li.show .box-item-icons.box-item-top {display: flex;}
+.box-item-icons.box-item-bottom {bottom: 5px;display: flex;}
+.box-item-icon {cursor: pointer;}
+ul.content-box-list li h5:hover,
+.box-item-icon:hover i {color: var(--color-orange) !important;}
+.header-content-box {padding: 20px 0;color: #ccc;line-height: 1.4;display: flex;}
+.header-content-box .container-msg {padding: 0 0 0 10px !important;}
+/* -------------- Modal Container -------------- */
+#gridModal { display: none; position: absolute; top:0; width: 100%; z-index:10000;font-family: 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif; }
+#grid-modal-bg { display: block; position: absolute; width: 100%; height: 600px; background-color: rgba(0,191,255, 0.3); z-index:1; }
+#grid-modal-container { display: block; position: absolute; width: 600px !important; top: 60px; left: 50%; margin-left: -300px; border: 1px solid black; z-index:2;background-color: #e5e5e5; }
+#grid-modal-container.w800 { width: 800px !important; margin-left: -400px !important; }
+#grid-modal-container.expand { width: 1024px !important; margin-left: -512px !important;}
+#gridModal .grid-modal-head,
+#gridModal .grid-modal-footer { width: 100%; background-color: #333; color: #e5e5e5; }
+#gridModal .grid-modal-head .title{ line-height: 2em; padding-left: 10px; font-weight: bold; }
+#gridModal .grid-modal-footer {display: flex;justify-content: space-between;}
+#gridModal .grid-modal-body { padding: 30px 0;background-color: rgba(127, 125, 125, 1);color: #ccc;overflow-y: auto;}
+#gridModal .grid-modal-body .modal-body-container { padding: 10px; }
+#gridModal .grid-modal-body form.one-row-form { width: 90%; margin: 0 auto; text-align: center;}
+#gridModal .grid-modal-body form.one-row-form > div { width: 90%; margin: 0 auto; text-align: left;padding-bottom: 5px;}
+#gridModal .grid-modal-body form.one-row-form > div > label { vertical-align: top; margin: 0 10px;}
+#gridModal .grid-modal-body form.one-row-form > div input,
+#gridModal .grid-modal-body form.one-row-form > div select { width: 160px;background-color: #58585b;color:#f5f5f5;border:0;line-height: 1.9em;padding: 3px 5px;outline: none;}
+#gridModal .grid-modal-body form.one-row-form > div input.w-medium,
+#gridModal .grid-modal-body form.one-row-form > div select.w-medium { width: 220px;}
+/* -------------- Message Container -------------- */
+.container-msg {color: #ffcc00;}
+.container-msg i {margin-right:5px;}
