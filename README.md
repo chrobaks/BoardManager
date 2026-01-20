@@ -4,7 +4,7 @@
 
 BoardManager is a lightweight, component-based web application for managing categories and items. The project is developed using **Vanilla JavaScript (ES6+)**.
 
-## 🚀 Key Features
+## Key Features
 
 - **Pure Vanilla JS:** No framework dependencies, full control over the DOM.
 - **Event-Driven Architecture:** Communication via a central Event Bus (Pub/Sub pattern).
@@ -15,13 +15,15 @@ BoardManager is a lightweight, component-based web application for managing cate
 
 ---
 
-## 🏗 Architecture & Patterns
+## Architecture & Patterns
 
 The project follows a strict modular structure:
 
 ### 1. Core Layer (`public/js/app/core/`)
 The application's base infrastructure:
 - **Api.js:** Automated component initialization and data import.
+- **EventBus.js:** 
+- **DomEventManager.js:**
 - **Modal & ModalAdapter:** A decoupled modal system for user interaction.
 - **Form.js / Dom.js:** Helper classes for DOM manipulation and form serialization.
 
@@ -40,7 +42,7 @@ Responsible for rendering:
 
 ---
 
-## 🛠 Installation & Local Development
+## Installation & Local Development
 
 ### Prerequisites
 Since the project uses ES modules, a local web server is required (security policies for the `file://` protocol prevent modules from loading).
@@ -74,7 +76,7 @@ Since the project uses ES modules, a local web server is required (security poli
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 ```text
 BoardManager/
@@ -94,4 +96,4 @@ BoardManager/
 ├── index.php                          # Entry page with HTML templates
 └── README.md
 ```
-Viel Erfolg mit deinem Projekt! Falls du noch weitere Anpassungen brauchst, sag einfach Bescheid. 😊
+
