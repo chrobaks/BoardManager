@@ -1,4 +1,4 @@
-export default class EventBusService {
+export default class EventBus {
     constructor() {
         this.events = {};
     }
@@ -10,7 +10,7 @@ export default class EventBusService {
             }
             this.events[event].push(handler);
         } catch (e) {
-            console.error('ERROR:EventBusService:on', e);
+            console.error('ERROR:EventBus:on', e);
         }
     }
 
@@ -21,7 +21,7 @@ export default class EventBusService {
             }
             this.events[event].forEach(handler => handler(payload));
         } catch (e) {
-            console.error('ERROR:EventBusService:emit', e);
+            console.error('ERROR:EventBus:emit', e);
         }
     }
 
@@ -32,7 +32,7 @@ export default class EventBusService {
             }
             this.events[event] = this.events[event].filter(h => h !== handler);
         } catch (e) {
-            console.error('ERROR:EventBusService:off', e);
+            console.error('ERROR:EventBus:off', e);
         }
     }
 }

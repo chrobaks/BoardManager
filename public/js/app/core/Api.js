@@ -1,36 +1,39 @@
 export default class Api
 {
-    static initComponents (componentClassList)
-    {
+    static initComponents(componentClassList) {
         const componentContainerList = document.querySelectorAll('[data-component]');
 
         if (componentContainerList.length) {
-            [... componentContainerList].forEach(el => {
-                if (el.dataset?.component && el.dataset.component.trim()) {
-                    const componentObj = Api.getComponentObject(el.dataset.component.trim(), componentClassList);
-                    if (!componentObj) {
-                        return;
-                    }
+            (async () => {
+                for (const el of [...componentContainerList]) {
+                    const componentName = el.dataset.component?.trim();
+                    if (!componentName) continue;
+
+                    const componentObj = Api.getComponentObject(componentName, componentClassList);
+                    if (!componentObj) continue;
 
                     try {
-                        const {obj: ComponentClass, depInject = []} = componentObj.componentDef;
+                        const { componentDef } = componentObj;
 
-                        if (componentObj.componentDef?.loadImport) {
-                            Api.getImport(el, componentObj.componentName).then(data => {
-                                new ComponentClass(el, data, ...depInject);
-                            });
+                        const importData = componentDef.loadImport
+                            ? await Api.getImport(el, componentName)
+                            : { json: {}, templates: {} };
+
+                        let constructorArgs = [];
+
+                        if (typeof componentDef.dependencies === 'function') {
+                            constructorArgs = componentDef.dependencies(el, importData);
                         } else {
-                            new ComponentClass(el, {}, ...depInject);
+                            constructorArgs = [el, importData, ...(componentDef.depInject || [])];
                         }
+
+                        new componentDef.obj(...constructorArgs);
+
                     } catch (e) {
-                        console.error(
-                            `Failed to initialize component "${componentObj.componentName}"`,
-                            e,
-                            el
-                        );
+                        console.error(`Failed to initialize component "${componentName}"`, e, el);
                     }
                 }
-            });
+            })();
         }
     }
 

@@ -1,6 +1,4 @@
 // Services
-import EventBusService from './Service/EventBusService.js';
-import DomEventBinder from './Service/DomEventBinder.js';
 import IdService from './Service/IdService.js';
 import TemplateService from './Service/TemplateService.js';
 
@@ -23,23 +21,38 @@ import ModalController from './Controller/ModalController.js';
 import FormFactory from './Factory/FormFactory.js';
 
 export default class BoardManager {
-    constructor(container, importData, modal) {
+
+    /**
+     * @param {HTMLElement} container
+     * @param {Object} importData
+     * @param {ModalAdapter} modal
+     * @param {EventBus} eventBus
+     * @param {DomEventManager} domManager
+     */
+    constructor(container, importData, modal, eventBus, domManager) {
+
+        console.log('BoardManager', importData, modal, eventBus, domManager);
         this.container = container;
         this.importData = importData;
         this.modal = modal;
+        this.eventBus = eventBus;
+        this.domManager = domManager;
+
+        this.init();
+    }
+
+    init() {
         this.initServices();
         this.initState();
         this.initView();
         this.initController();
-        this.initEventBindings();
-
     }
 
     /* -------------------- */
     /* Services             */
     /* -------------------- */
     initServices() {
-        this.eventBus = new EventBusService();
+        // this.eventBus = new EventBusService();
         this.categoryIdService = new IdService(this.importData.json.category);
         this.itemIdService = new IdService(this.importData.json.items);
         this.templateService = new TemplateService(this.importData.templates);
@@ -125,9 +138,5 @@ export default class BoardManager {
         this.categoryController.init();
         this.itemController.init();
         this.modalController.init();
-    }
-
-    initEventBindings() {
-        this.domBinder = new DomEventBinder(this.container, this.eventBus);
     }
 }

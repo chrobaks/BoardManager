@@ -1,80 +1,80 @@
-# BoardManager - Modulares Vanilla JS Management Dashboard
+# BoardManager - Modular Vanilla JS Management Dashboard
 
 ![BoardManager Screenshot](screenshots/Screenshot.png)
 
-BoardManager ist eine leichtgewichtige, komponentenbasierte Web-Anwendung zur Verwaltung von Kategorien und Items. Das Projekt wurde in **Vanilla JavaScript (ES6+)** entwickelt.
+BoardManager is a lightweight, component-based web application for managing categories and items. The project is developed using **Vanilla JavaScript (ES6+)**.
 
 ## 🚀 Key Features
 
-- **Reines Vanilla JS:** Keine Framework-Abhängigkeiten, volle Kontrolle über den DOM.
-- **Event-Driven Architecture:** Kommunikation über einen zentralen Event-Bus (Pub/Sub Pattern).
-- **Modulares MVC:** Klare Trennung zwischen Daten (Store), Logik (Controller) und Darstellung (View).
-- **Dynamische Formular-Generierung:** Automatisierte Erstellung von UI-Formularen basierend auf JSON-Schemas.
-- **Zustandsmanagement:** Zentralisierte Stores mit Daten-Normalisierung und Typsicherheit.
-- **Responsives Design:** Integriert mit Bootstrap 5.3 .
+- **Pure Vanilla JS:** No framework dependencies, full control over the DOM.
+- **Event-Driven Architecture:** Communication via a central Event Bus (Pub/Sub pattern).
+- **Modular MVC:** Clear separation between data (Store), logic (Controller), and presentation (View).
+- **Dynamic Form Generation:** Automated creation of UI forms based on JSON schemas.
+- **State Management:** Centralized stores with data normalization and type safety.
+- **Responsive Design:** Integrated with Bootstrap 5.3.
 
 ---
 
-## 🏗 Architektur & Pattern
+## 🏗 Architecture & Patterns
 
-Das Projekt folgt einer strengen modularen Struktur:
+The project follows a strict modular structure:
 
 ### 1. Core Layer (`public/js/app/core/`)
-Die Basis-Infrastruktur der Anwendung:
-- **Api.js:** Automatisierte Komponenten-Initialisierung und Datenimport.
-- **Modal & ModalAdapter:** Ein entkoppeltes Modal-System zur Interaktion.
-- **Form.js / Dom.js:** Hilfsklassen für DOM-Manipulation und Formular-Serialisierung.
+The application's base infrastructure:
+- **Api.js:** Automated component initialization and data import.
+- **Modal & ModalAdapter:** A decoupled modal system for user interaction.
+- **Form.js / Dom.js:** Helper classes for DOM manipulation and form serialization.
 
 ### 2. State Layer (`State/`)
-Verwaltet die Datenintegrität:
-- **AbstractStore:** Basisklasse für alle Daten-Operationen inklusive eines `schema`-basierten `normalize`-Prozesses, der sicherstellt, dass Daten (z. B. aus dem DOM) korrekt gecastet werden (Strings zu Numbers etc.).
+Manages data integrity:
+- **AbstractStore:** Base class for all data operations, including a `schema`-based `normalize` process that ensures data (e.g., from the DOM) is correctly cast (Strings to Numbers, etc.).
 
 ### 3. Controller Layer (`Controller/`)
-Die Brücke zwischen View und State:
-- **AbstractController:** Enthält die DRY-Logik (Don't Repeat Yourself) für Standard-Aktionen wie `add`, `edit`, `delete` und `modalForm`.
-- **Spezifische Controller:** Erben vom AbstractController und implementieren individuelle Geschäftslogik (z. B. Verknüpfung von Items zu Kategorien).
+The bridge between View and State:
+- **AbstractController:** Contains DRY (Don't Repeat Yourself) logic for standard actions such as `add`, `edit`, `delete`, and `modalForm`.
+- **Specific Controllers:** Inherit from AbstractController and implement individual business logic (e.g., linking items to categories).
 
 ### 4. View Layer (`View/`)
-Verantwortlich für das Rendering:
-- **BoardView:** Nutzt HTML-Templates (`<template>`), um Daten effizient und reaktiv im UI darzustellen.
+Responsible for rendering:
+- **BoardView:** Utilizes HTML templates (`<template>`) to display data efficiently and reactively in the UI.
 
 ---
 
-## 🛠 Installation & Lokale Entwicklung
+## 🛠 Installation & Local Development
 
-### Voraussetzungen
-Da das Projekt ES-Module verwendet, wird ein lokaler Webserver benötigt (Sicherheitsrichtlinien für `file://` Protokoll verhindern das Laden von Modulen).
+### Prerequisites
+Since the project uses ES modules, a local web server is required (security policies for the `file://` protocol prevent modules from loading).
 
-### Schritt-für-Schritt Anleitung
+### Step-by-Step Instructions
 
-1. **Repository klonen:**
+1. **Clone the repository:**
    ```bash
-   git clone https://github.com/DEIN_USERNAME/BoardManager.git
+   git clone https://github.com/YOUR_USERNAME/BoardManager.git
    cd BoardManager
    ```
 
-2. **Webserver starten:**
-   Du kannst jeden beliebigen Webserver nutzen. Hier sind einige Beispiele:
+2. **Start a web server:**
+   You can use any web server you prefer. Here are a few examples:
 
-    - **PHP (eingebaut):**
-      ```bash
-      php -S localhost:8000
-      ```
-    - **Python:**
-      ```bash
-      python3 -m http.server 8000
-      ```
-    - **Node.js (http-server):**
-      ```bash
-      npx http-server
-      ```
+   - **PHP (built-in):**
+     ```bash
+     php -S localhost:8000
+     ```
+   - **Python:**
+     ```bash
+     python3 -m http.server 8000
+     ```
+   - **Node.js (http-server):**
+     ```bash
+     npx http-server
+     ```
 
-3. **Browser öffnen:**
-   Rufe `http://localhost:8000` auf.
+3. **Open your browser:**
+   Navigate to `http://localhost:8000`.
 
 ---
 
-## 📂 Projektstruktur
+## 📂 Project Structure
 
 ```text
 BoardManager/
@@ -82,15 +82,16 @@ BoardManager/
 │   ├── js/
 │   │   ├── app/
 │   │   │   ├── component/
-│   │   │   │   └── BoardManager/      # Hauptkomponente
-│   │   │   │       ├── Controller/    # Business Logik
-│   │   │   │       ├── State/         # Data Stores
-│   │   │   │       ├── View/          # UI Rendering
-│   │   │   │       └── Service/       # Hilfsdienste (Events, IDs)
-│   │   │   ├── core/                  # Basis-Framework
-│   │   │   └── App.js                 # Einstiegspunkt
+│   │   │   │   └── BoardManager/      # Main component
+│   │   │   │       ├── Controller/    # Business logic
+│   │   │   │       ├── State/         # Data stores
+│   │   │   │       ├── View/          # UI rendering
+│   │   │   │       └── Service/       # Helper services (Events, IDs)
+│   │   │   ├── core/                  # Base framework
+│   │   │   └── App.js                 # Entry point
 │   ├── css/                           # Styling (App & Bootstrap)
-│   └── data/                          # JSON-Datenquellen
-├── index.php                          # Einstiegsseite mit HTML-Templates
+│   └── data/                          # JSON data sources
+├── index.php                          # Entry page with HTML templates
 └── README.md
 ```
+Viel Erfolg mit deinem Projekt! Falls du noch weitere Anpassungen brauchst, sag einfach Bescheid. 😊

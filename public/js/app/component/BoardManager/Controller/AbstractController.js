@@ -12,6 +12,7 @@ export default class AbstractController {
     }
 
     modalForm() {
+        console.log('modalForm');
         this.events.emit('modal:open:form', {type: this.dataType, payload: {id: 0}});
         this.events.emit('category:reset', {});
         this.events.emit('item:reset', {});
