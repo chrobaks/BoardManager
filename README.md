@@ -2,9 +2,11 @@
 
 ![BoardManager Screenshot](screenshots/Screenshot.png)
 
-### [🌐 Live Demo](https://chrobaks.github.io/BoardManager/)
+
 
 BoardManager is a lightweight, component-based web application for managing categories and items. The project is developed using **Vanilla JavaScript (ES6+)**.
+
+
 
 ## Key Features
 
