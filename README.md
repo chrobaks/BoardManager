@@ -100,6 +100,6 @@ BoardManager/
 │   │   │   └── App.js                 # Entry point
 │   ├── css/                           # Styling (App & Bootstrap)
 │   └── data/                          # JSON data sources
-├── index.php                          # Entry page with HTML templates
+├── index.html                          # Entry page with HTML templates
 └── README.md
 ```
