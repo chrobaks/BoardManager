@@ -8,17 +8,17 @@ export default class CategoryController extends AbstractController {
     init() {
         this.view.render(this.store.all());
 
-        this.events.on('click:category:show', payload => this.show(payload));
-        this.events.on('click:category:modal:form', () => this.modalForm());
-        this.events.on('click:category:add', payload => this.add(payload));
-        this.events.on('click:category:edit', payload => this.edit(payload));
-        this.events.on('click:category:update', payload => this.update(payload));
-        this.events.on('click:category:delete', payload => this.delete(payload));
-        this.events.on('click:category:delete:item', payload => this.deleteItem(payload));
-        this.events.on('click:category:remove', payload => this.remove(payload));
-        this.events.on('click:category:reset', () => {
-            this.view.render(this.store.all());
-        });
+        this.bindUserClickEvents();
+        /**
+         * Data Lifecycle & Domain Logic Events
+         * Unlike the UI click events automated in bindUserClickEvents(), these listeners
+         * are explicitly registered to handle internal application logic and store updates.
+         */
+        this.events.on('category:add', payload => this.add(payload));
+        this.events.on('category:update', payload => this.update(payload));
+        this.events.on('category:delete:item', payload => this.deleteItem(payload));
+        this.events.on('category:remove', payload => this.remove(payload));
+        this.events.on('category:reset', () =>  this.reset());
     }
 
     show(data) {
@@ -35,7 +35,7 @@ export default class CategoryController extends AbstractController {
                 } else {
                     this.uiState.showBoard('category');
                 }
-                this.events.emit('click:item:show:catItems', catItems);
+                this.events.emit('item:show:catItems', catItems);
         }
     }
 
@@ -47,7 +47,7 @@ export default class CategoryController extends AbstractController {
             const cat = this.store.getById(this.uiState.getActiveId('category'));
             if (cat && cat?.items) {
                 this.view.renderNodeData(cat);
-                this.events.emit('click:item:show:catItems', cat.items);
+                this.events.emit('item:show:catItems', cat.items);
             }
 
         }
@@ -71,7 +71,7 @@ export default class CategoryController extends AbstractController {
         } else {
             const cat = this.store.getById(Number(this.uiState.getActiveId('category')));
             this.store.removeItem(cat, data.id);
-            this.events.emit('click:item:show:catItems', cat.items);
+            this.events.emit('item:show:catItems', cat.items);
         }
         this.updateCategoryItemCount();
     }
@@ -82,6 +82,6 @@ export default class CategoryController extends AbstractController {
         if (this.uiState.isCategoryView()) {
             this.uiState.showBoard('category');
         }
-        this.events.emit('click:item:reset', {});
+        this.events.emit('item:reset', {});
     }
 }

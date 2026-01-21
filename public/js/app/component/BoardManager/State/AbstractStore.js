@@ -29,41 +29,48 @@ export default class AbstractStore {
     }
 
     normalize(data) {
-        const result = {};
+        try {
+            const result = {};
 
-        Object.keys(this.schema).forEach(key => {
-            if ((key in data)) {
+            Object.keys(this.schema).forEach(key => {
+                if (key in data) {
+                    const fieldDefinition = this.schema[key];
+                    const type = typeof fieldDefinition === 'object' ? fieldDefinition.type : fieldDefinition;
+                    const value = data[key];
 
-                const type = this.schema[key];
-                const value = data[key];
+                    switch (type) {
+                        case 'number':
+                            result[key] = value !== null && value !== '' ? Number(value) : null;
+                            break;
 
-                switch (type) {
-                    case 'number':
-                        result[key] = Number(value);
-                        break;
+                        case 'text':
+                        case 'string':
+                            result[key] = String(value);
+                            break;
 
-                    case 'string':
-                        result[key] = String(value);
-                        break;
+                        case 'collection':
+                        case 'number[]':
+                            result[key] = Array.isArray(value)
+                                ? value.map(Number)
+                                : (value ? [Number(value)] : []);
+                            break;
 
-                    case 'number[]':
-                        result[key] = Array.isArray(value)
-                            ? value.map(Number)
-                            : [];
-                        break;
+                        case 'string[]':
+                            result[key] = Array.isArray(value)
+                                ? value.map(String)
+                                : (value ? [String(value)] : []);
+                            break;
 
-                    case 'string[]':
-                        result[key] = Array.isArray(value)
-                            ? value.map(String)
-                            : [];
-                        break;
-
-                    default:
-                        result[key] = value;
+                        default:
+                            result[key] = value;
+                    }
                 }
-            }
-        });
+            });
 
-        return result;
+            return result;
+        } catch (e) {
+            console.error(`Normalization error in ${this.constructor.name}:`, e);
+            return data;
+        }
     }
 }

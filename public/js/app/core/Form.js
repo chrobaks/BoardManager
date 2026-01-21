@@ -38,12 +38,13 @@ export default class Form {
 
         for (const err of errorList) {
             const input = container.querySelector(`[name="${err.field}"]`);
+            const inputWrapper = input.closest('div');
             if (input) {
                 input.classList.add('is-invalid');
                 const msg = document.createElement('div');
-                msg.className = 'error-msg text-danger small mt-1';
+                msg.className = 'error-msg text-danger small mb-1';
                 msg.textContent = err.message;
-                input.after(msg);
+                inputWrapper.after(msg);
             }
         }
     }

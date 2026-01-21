@@ -8,17 +8,17 @@ export default class ItemController extends AbstractController {
     init() {
         this.view.render(this.store.all());
 
-        this.events.on('click:item:show', payload => this.show(payload));
-        this.events.on('click:item:show:catItems', catItems => this.showCatItems(catItems));
-        this.events.on('click:item:modal:form', () => this.modalForm());
-        this.events.on('click:item:add', payload => this.add(payload));
-        this.events.on('click:item:edit', payload => this.edit(payload));
-        this.events.on('click:item:update', payload => this.update(payload));
-        this.events.on('click:item:remove', id => this.remove(id));
-        this.events.on('click:item:delete', payload => this.delete(payload));
-        this.events.on('click:item:reset', () => {
-            this.view.render(this.store.all());
-        });
+        this.bindUserClickEvents();
+        /**
+         * Data Lifecycle & Domain Logic Events
+         * Unlike the UI click events automated in bindUserClickEvents(), these listeners
+         * are explicitly registered to handle internal application logic and store updates.
+         */
+        this.events.on('item:add', payload => this.add(payload));
+        this.events.on('item:update', payload => this.update(payload));
+        this.events.on('item:show:catItems', catItems => this.showCatItems(catItems));
+        this.events.on('item:remove', id => this.remove(id));
+        this.events.on('item:reset', () => this.reset());
     }
 
     show(data) {
@@ -59,6 +59,6 @@ export default class ItemController extends AbstractController {
             this.store.remove(id);
             this.view.render(this.store.all());
         }
-        this.events.emit('click:category:delete:item', {id:id});
+        this.events.emit('category:delete:item', {id:id});
     }
 }

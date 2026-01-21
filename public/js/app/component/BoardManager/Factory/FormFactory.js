@@ -5,11 +5,17 @@ export default class FormFactory {
     }
 
     categoryForm(data = {}) {
-        return this._build('categoryForm', data);
+        return {
+            dom: this._build('categoryForm', data),
+            formType: this._getFormType('category')
+        };
     }
 
     itemForm(data = {}) {
-        return this._build('itemsForm', data);
+        return {
+            dom: this._build('itemsForm', data),
+            formType: this._getFormType('item')
+        };
     }
 
     _build(key, data) {
@@ -27,5 +33,9 @@ export default class FormFactory {
         });
 
         return form;
+    }
+
+    _getFormType(key) {
+        return this.schema.formType[key] ?? null;
     }
 }

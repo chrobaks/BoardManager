@@ -1,5 +1,6 @@
 import FormRenderer from '../Service/FormRenderer.js';
 import Form from '../../../core/Form.js';
+import Validator from '../../../core/Validator.js';
 
 export default class ModalController {
     constructor(modal, eventBus, formFactory) {
@@ -21,22 +22,33 @@ export default class ModalController {
 
             const formAction = obj.type + 'Form';
             const form = this.formFactory[formAction](obj.payload);
-            const html = FormRenderer.render(form, { selector: 'one-row-form' }, true);
+            const html = FormRenderer.render(form.dom, { selector: 'one-row-form' }, true);
 
             this.modal.setContent(html, {
                 type: 'save',
                 onSubmit: () => {
-                    const formContainer = this.modal.getModalForm();
-                    const data = Form.serialize(formContainer);
-                    const errors = Form.validate(formContainer);
+                    try {
+                        const formContainer = this.modal.getModalForm();
+                        const data = Form.serialize(formContainer);
 
-                    if (errors.length > 0) {
-                        Form.showErrors(formContainer, errors);
+                        let errors = [];
+                        if (form.formType) {
+                            errors = Validator.validate(data, form.formType);
+                        }
+
+                        if (errors.length > 0) {
+                            Form.showErrors(formContainer, errors);
+                            return false;
+                        }
+
+                        this.events.emit(obj.payload.id ? obj.type + ':update' : obj.type + ':add', data);
+
+                        return true;
+                    } catch (e) {
+                        console.error('ERROR:ModalController:openForm', e);
+
                         return false;
                     }
-
-                    this.events.emit(obj.payload.id ? obj.type + ':update' : obj.type + ':add', data);
-                    return true;
                 }
             });
         }

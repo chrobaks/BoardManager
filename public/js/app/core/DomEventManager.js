@@ -17,16 +17,20 @@ export default class DomEventManager {
         });
     }
     handleEvent(event) {
-        const target = event.target.closest('[data-event]');
-        if (!target) return;
+        try {
+            const target = event.target.closest('[data-event]');
+            if (!target) return;
 
-        const action = target.dataset.event;
+            const action = target.dataset.event;
 
-        this.eventBus.emit(`${event.type}:${action}`, {
-            ...target.dataset,
-            id: target.closest('[data-item-id]')?.dataset.itemId,
-            value: target.value || target.dataset.value || null,
-            originalEvent: event
-        });
+            this.eventBus.emit(`${event.type}:${action}`, {
+                ...target.dataset,
+                id: target.closest('[data-item-id]')?.dataset.itemId,
+                targetValue: target.value || target.dataset.value || null,
+                originalEvent: event
+            });
+        } catch (e) {
+            console.error('Critical Error in DomEventManager:', e);
+        }
     }
 }

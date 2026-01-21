@@ -24,19 +24,85 @@
         {"name":"value","element":"input","type":"text","selector":"","title":"Item Value","required":"required","label":"Item Value"},
         {"name":"description","element":"input","type":"text","selector":"","title":"Beschreibung","required":"required","label":"Beschreibung"}
     ],
-    "typeSchema" : {
+    "formType" : {
         "category": {
-            "id": "number",
-            "name": "string",
-            "description": "string",
-            "version": "string",
-            "items": "number[]"
+            "id": {
+                "type": "number",
+                "constraints": [
+                    { "rule": "required", "message": "Id is mandatory" }
+                ]
+            },
+            "name": {
+                "type": "text",
+                "constraints": [
+                    { "rule": "required", "message": "Name is mandatory" },
+                    { "rule": "max_length", "params": { "value": 100 }, "message": "Too much input" },
+                    { "rule": "min_length", "params": { "value": 2 }, "message": "Input is too short" }
+                ]
+            },
+            "description": {
+                "type": "text",
+                "constraints": [
+                    { "rule": "required", "message": "Description is mandatory" },
+                    { "rule": "max_length", "params": { "value": 225 }, "message": "Too much input" },
+                    { "rule": "min_length", "params": { "value": 2 }, "message": "Input is too short" }
+                ]
+            },
+            "version": {
+                "type": "text",
+                "constraints": [
+                    { "rule": "required", "message": "Version is mandatory" },
+                    { "rule": "max_length", "params": { "value": 30 }, "message": "Too much input" },
+                    { "rule": "min_length", "params": { "value": 2 }, "message": "Input is too short" }
+                ]
+            },
+            "items": {
+                "type": "collection",
+                "constraints": [
+                    {
+                        "rule": "type",
+                        "params": { "expected": "array" },
+                        "message": "Must be an array"
+                    },
+                    {
+                        "rule": "collection_types",
+                        "params": { "allowed": ["number"] },
+                        "message": "Only IDs (numbers) allowed"
+                    }
+                ]
+            }
         },
-        "items": {
-            "id": "number",
-            "name": "string",
-            "value": "string",
-            "description": "string"
+        "item": {
+            "id": {
+                "type": "number",
+                "constraints": [
+                    { "rule": "required", "message": "Id is mandatory" }
+                ]
+            },
+            "name": {
+                "type": "text",
+                "constraints": [
+                    { "rule": "required", "message": "Name is mandatory" },
+                    { "rule": "max_length", "params": { "value": 100 }, "message": "Too much input" },
+                    { "rule": "min_length", "params": { "value": 2 }, "message": "Input is too short" }
+                ]
+            },
+            "value": {
+                "type": "text",
+                "constraints": [
+                    { "rule": "required", "message": "Value is mandatory" },
+                    { "rule": "max_length", "params": { "value": 100 }, "message": "Too much input" },
+                    { "rule": "min_length", "params": { "value": 2 }, "message": "Input is too short" }
+                ]
+            },
+            "description": {
+                "type": "text",
+                "constraints": [
+                    { "rule": "required", "message": "Description is mandatory" },
+                    { "rule": "max_length", "params": { "value": 225 }, "message": "Too much input" },
+                    { "rule": "min_length", "params": { "value": 2 }, "message": "Input is too short" }
+                ]
+            }
         }
     }
 }

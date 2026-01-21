@@ -20,6 +20,13 @@ import ModalController from './Controller/ModalController.js';
 // Factory
 import FormFactory from './Factory/FormFactory.js';
 
+export const BOARD_EVENT_ACTIONS = {
+    SHOW: 'show',
+    FORM: 'modal:form',
+    EDIT: 'edit',
+    DELETE: 'delete'
+};
+
 export default class BoardManager {
 
     /**
@@ -30,8 +37,6 @@ export default class BoardManager {
      * @param {DomEventManager} domManager
      */
     constructor(container, importData, modal, eventBus, domManager) {
-
-        console.log('BoardManager', importData, modal, eventBus, domManager);
         this.container = container;
         this.importData = importData;
         this.modal = modal;
@@ -64,11 +69,11 @@ export default class BoardManager {
     initState() {
         this.categoryStore = new CategoryStore(
             structuredClone(this.importData.json.category || []),
-            structuredClone(this.importData.json.typeSchema.category || {})
+            structuredClone(this.importData.json.formType.category || {})
         );
         this.itemStore = new ItemStore(
             structuredClone(this.importData.json.items || []),
-            structuredClone(this.importData.json.typeSchema.items || {})
+            structuredClone(this.importData.json.formType.item || {})
         );
         this.commitStore = new CommitStore();
         this.uiState = new UIState({
