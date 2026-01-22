@@ -1,5 +1,6 @@
 export default class BoardView {
     constructor(wrapper, templateService, templateId) {
+        this.container = wrapper.closest('div.itemboard-wrapper');
         this.wrapper = wrapper;
         this.templateService = templateService;
         this.templateId = templateId;
@@ -10,6 +11,8 @@ export default class BoardView {
         collection.forEach(data => {
             this.wrapper.appendChild(this.createNode(data));
         });
+        this.renderBoardItemsCount();
+
     }
 
     renderNodeData (data) {
@@ -33,6 +36,19 @@ export default class BoardView {
         const element = node.querySelector('[data-item-key="' + key + '"]');
         if (!element) return;
         element.innerText = value;
+    }
+
+    renderBoardItemsCount() {
+        this.renderDataItemKeyValue(this.container, 'itemBoardLength', this.getChildrenLength());
+    }
+
+    displayItemKeyBox(id, show = true)
+    {
+        const elementContainer = this.container.querySelector('[data-item-key="' + id + '"]');
+        if (elementContainer) {
+            const act = !show ? "add" : "remove";
+            elementContainer.closest('div').classList[act]("d-none");
+        }
     }
 
     createNode(json) {
@@ -84,5 +100,45 @@ export default class BoardView {
 
     getElementContainer (id) {
         return this.wrapper.querySelector('[data-item-id="' + id + '"]') ?? null;
+    }
+
+    getItemElements() {
+        return Array.from(this.wrapper.children).filter(el => el.tagName === 'LI');
+    }
+
+    getChildrenLength() {
+        return this.getItemElements().length;
+    }
+
+    getFirstChildNode() {
+        return this.getItemElements()[0] ?? null;
+    }
+
+    getChildAt(index) {
+        const items = this.getItemElements();
+        return items[index] ?? null;
+    }
+
+    scrollIntoView() {
+        const el = this.wrapper;
+        const rect = el.getBoundingClientRect();
+        const isUlVisible = rect.top < window.innerHeight && rect.bottom > 0;
+
+        if (el.scrollHeight <= el.clientHeight) {
+            return;
+        }
+
+        if (!isUlVisible) {
+            el.scrollIntoView({ block: 'start', behavior: 'smooth' });
+        }
+
+        window.requestAnimationFrame(() => {
+            const top = el.scrollHeight;
+            if (typeof el.scrollTo === 'function') {
+                el.scrollTo({ top, behavior: 'smooth' });
+            } else {
+                el.scrollTop = top;
+            }
+        });
     }
 }

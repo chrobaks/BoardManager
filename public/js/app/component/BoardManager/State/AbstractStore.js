@@ -73,4 +73,7 @@ export default class AbstractStore {
             return data;
         }
     }
+    currentCount() {
+        return this.collection.length ?? 0;
+    }
 }

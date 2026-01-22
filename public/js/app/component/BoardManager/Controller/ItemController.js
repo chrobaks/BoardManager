@@ -8,6 +8,8 @@ export default class ItemController extends AbstractController {
     init() {
         this.view.render(this.store.all());
 
+        this.initListHeightAndEnableScroll();
+
         this.bindUserClickEvents();
         /**
          * Data Lifecycle & Domain Logic Events
@@ -27,21 +29,24 @@ export default class ItemController extends AbstractController {
             this.view.toggleBoxItem(payload.id);
             if (this.uiState.isBoardView('item')) {
                 this.uiState.showItem(payload.id);
+                this.view.displayItemKeyBox('itemBoardLength', false);
             } else {
                 this.uiState.showBoard('item');
+                this.view.displayItemKeyBox('itemBoardLength', true);
             }
         }
     }
 
     showCatItems(catItems) {
-
         if (catItems) {
             let items = [];
             catItems.forEach(id => items.push(this.store.getById(id)));
             this.view.render(items);
+            this.uiState.showBoard('item');
         } else {
             this.view.render(this.store.all());
         }
+        this.view.displayItemKeyBox('itemBoardLength', true);
     }
 
     update(data) {
@@ -60,5 +65,6 @@ export default class ItemController extends AbstractController {
             this.view.render(this.store.all());
         }
         this.events.emit('category:delete:item', {id:id});
+        this.view.renderBoardItemsCount();
     }
 }

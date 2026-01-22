@@ -8,6 +8,8 @@ export default class CategoryController extends AbstractController {
     init() {
         this.view.render(this.store.all());
 
+        this.initListHeightAndEnableScroll();
+
         this.bindUserClickEvents();
         /**
          * Data Lifecycle & Domain Logic Events
@@ -25,15 +27,20 @@ export default class CategoryController extends AbstractController {
         const payload = this.store.normalize(data);
         if (payload?.id && payload.id) {
                 const cat = this.store.getById(payload.id);
+
+                if (!cat) return;
+
                 let catItems = null;
 
                 this.view.toggleBoxItem(payload.id);
 
                 if (this.uiState.isBoardView('category')) {
-                    this.uiState.showCategory(payload.id);
                     catItems = cat.items;
+                    this.uiState.showCategory(payload.id);
+                    this.view.displayItemKeyBox('itemBoardLength', false);
                 } else {
                     this.uiState.showBoard('category');
+                    this.view.displayItemKeyBox('itemBoardLength', true);
                 }
                 this.events.emit('item:show:catItems', catItems);
         }
@@ -83,5 +90,7 @@ export default class CategoryController extends AbstractController {
             this.uiState.showBoard('category');
         }
         this.events.emit('item:reset', {});
+        this.view.renderBoardItemsCount();
     }
+
 }

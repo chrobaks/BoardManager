@@ -18,7 +18,7 @@ button.btn-fa i {margin-right: 10px;}
 /* -------------- Board Container -------------- */
 ul.content-box-list {display: flex; justify-content: flex-start;flex-wrap: wrap;width: 100%;margin: 0;padding:2px 0 0 2px ;list-style: none;background-color: transparent !important;border: 1px solid #ccc;border-radius: 0.25rem;}
 ul.content-box-list li {position: relative;border: 1px solid #ccc;border-radius: 0.25rem;min-width: calc((100% / 2) - 2px);margin: 0 2px 3px 0;padding: 10px 0 !important;color: #ccc;background-color: #666 !important;-webkit-user-select: none;-moz-user-select: none;user-select: none;font-size: 1rem;text-align: center;}
-ul.content-box-list.product li {min-width: calc((100% / 3) - 2px) !important;}
+ul.content-box-list.items li {min-width: calc((100% / 3) - 2px) !important;}
 ul.content-box-list li.elements {width: 15%;}
 ul.content-box-list li.show {min-width: calc(100% - 2px);min-height: 300px;display: block !important;}
 ul.content-box-list.product li.show {min-width: calc(100% - 2px) !important;}
@@ -37,6 +37,17 @@ ul.content-box-list li h5:hover,
 .box-item-icon:hover i {color: var(--color-orange) !important;}
 .header-content-box {padding: 20px 0;color: #ccc;line-height: 1.4;display: flex;}
 .header-content-box .container-msg {padding: 0 0 0 10px !important;}
+
+@media (max-width: 767.98px) and (orientation: portrait) {
+    ul.content-box-list li,
+    ul.content-box-list.items li{min-width: calc(100% - 2px) !important;}
+}
+@media (max-width: 991.98px) and (orientation: landscape) {
+    ul.content-box-list li,
+    ul.content-box-list.items li{min-width: calc((100% / 2) - 2px) !important;}
+}
+
+
 /* -------------- Modal Container -------------- */
 #gridModal { display: none; position: absolute; top:0; width: 100%; z-index:10000;font-family: 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif; }
 #grid-modal-bg { display: block; position: absolute; width: 100%; height: 600px; background-color: rgba(0,191,255, 0.3); z-index:1; }
@@ -56,6 +67,39 @@ ul.content-box-list li h5:hover,
 #gridModal .grid-modal-body form.one-row-form > div select { width: 160px;background-color: #58585b;color:#f5f5f5;border:0;line-height: 1.9em;padding: 3px 5px;outline: none;}
 #gridModal .grid-modal-body form.one-row-form > div input.w-medium,
 #gridModal .grid-modal-body form.one-row-form > div select.w-medium { width: 220px;}
+
+@media (max-width: 767.98px) {
+    #gridModal {
+        position: fixed;
+        inset: 0;
+    }
+
+    #grid-modal-bg {
+        position: fixed;
+        inset: 0;
+        height: 100vh;
+        background-color: rgba(0,191,255, 0.3);
+    }
+
+    #grid-modal-container {
+        position: fixed;
+        inset: 0;
+        width: 100% !important;
+        height: 100vh;
+        left: 0;
+        top: 0;
+        margin-left: 0 !important;
+        border: 0;
+        border-radius: 0;
+        background-color: transparent !important;
+    }
+
+    #gridModal .grid-modal-body {
+        max-height: calc(100vh - 110px);
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+}
 /* -------------- Message Container -------------- */
 .container-msg {color: #ffcc00;}
 .container-msg i {margin-right:5px;}
