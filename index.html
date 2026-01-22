@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>BoardManager</title>
     <link rel="stylesheet" href="public/css/bootstrap-5.3/bootstrap.css">
     <link rel="stylesheet" href="public/css/fas.min.css">
@@ -32,13 +33,15 @@
                 </div>
             </div>
             <div class="row mt-3">
-                <div class="col-6 itemboard-wrapper">
+                <div class="col-12 col-lg-6 itemboard-wrapper">
                     <button class="btn btn-primary btn-fa btn-sm mb-3" data-event="category:modal:form"><i class="fa fa-file-import" aria-hidden="true"></i>Neuen Task anlegen</button>
                     <ul class="content-box-list category"></ul>
+                    <div class="text-end small container-msg me-1">Anzahl: <span data-item-key="itemBoardLength"></span></div>
                 </div>
-                <div class="col-6 itemboard-wrapper">
+                <div class="col-12 col-lg-6 mt-3 mt-md-0 mb-5 mb-md-0 itemboard-wrapper">
                     <button class="btn btn-primary btn-fa btn-sm mb-3" data-event="item:modal:form"><i class="fa fa-file-import" aria-hidden="true"></i>Neues Item anlegen</button>
                     <ul class="content-box-list items product"></ul>
+                    <div class="text-end small container-msg me-1">Anzahl: <span data-item-key="itemBoardLength"></span></div>
                 </div>
                 <script type="application/json" src="public/js/app/data/itemBoard.json" data-source="BoardManager"></script>
                 <template data-template="categoryTemplate" data-source="BoardManager">
