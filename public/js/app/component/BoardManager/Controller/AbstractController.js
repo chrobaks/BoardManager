@@ -68,6 +68,12 @@ export default class AbstractController {
 
         this.applyScrollLimitIfNeeded(threshold);
         this.view.scrollIntoView();
+
+        this.events.emit('commit:add', {
+            action: 'add',
+            type: this.dataType,
+            payload: data
+        });
     }
 
     delete(data) {

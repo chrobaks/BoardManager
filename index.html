@@ -24,11 +24,21 @@
                     <span class="component-msg">Configuration Board</span>
                 </div>
             </div>
-            <div class="row container-commit d-none">
+            <div class="row container-commit">
                 <div class="col-12 mt-3">
                     <div class="alert alert-primary">
-                        <p><i class="fa fa-info-circle" aria-hidden="true"></i> Sie haben einen ungespeicherten Commit!</p>
-                        <button class="btn btn-primary btn-fa btn-sm"><i class="fa fa-file-import" aria-hidden="true"></i>Neuen Commit speichern</button>
+
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" role="switch" id="switchSaveCommit" checked>
+                            <label class="form-check-label" for="switchSaveCommit">Commits automatisch speichern</label>
+                        </div>
+                        <p>
+                            If this setting is active, then every data change will be saved immediately in the backend.
+                        </p>
+                        <div class="d-none commit-ctrl">
+                            <p><i class="fa fa-info-circle" aria-hidden="true"></i> Sie haben einen ungespeicherten Commit!</p>
+                            <button class="btn btn-primary btn-fa btn-sm" data-event="commit:submit"><i class="fa fa-file-import" aria-hidden="true"></i>Neuen Commit speichern</button>
+                        </div>
                     </div>
                 </div>
             </div>

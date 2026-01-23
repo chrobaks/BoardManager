@@ -58,6 +58,11 @@ export default class CategoryController extends AbstractController {
             }
 
         }
+        this.events.emit('commit:add', {
+            action: 'update',
+            type: this.dataType,
+            payload: data
+        });
     }
 
     updateCategoryItemCount () {
@@ -81,6 +86,11 @@ export default class CategoryController extends AbstractController {
             this.events.emit('item:show:catItems', cat.items);
         }
         this.updateCategoryItemCount();
+        this.events.emit('commit:add', {
+            action: 'deleteItem',
+            type: 'category',
+            payload: { itemId: data.id }
+        });
     }
 
     remove(id) {
@@ -91,6 +101,11 @@ export default class CategoryController extends AbstractController {
         }
         this.events.emit('item:reset', {});
         this.view.renderBoardItemsCount();
+        this.events.emit('commit:add', {
+            action: 'remove',
+            type: this.dataType,
+            payload: { id }
+        });
     }
 
 }

@@ -5,7 +5,7 @@ export default class MessageView {
 
     show(message, type = 'info') {
         this.container.innerText = message;
-        this.container.className = `alert alert-${type}`;
+        // this.container.className = `alert alert-${type}`;
     }
 
     clear() {

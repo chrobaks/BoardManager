@@ -3,10 +3,7 @@
 ![BoardManager Screenshot](screenshots/Screenshot.png)
 
 
-
 BoardManager is a lightweight, component-based web application for managing categories and items. The project is developed using **Vanilla JavaScript (ES6+)**.
-
-
 
 ## Key Features
 
@@ -16,6 +13,32 @@ BoardManager is a lightweight, component-based web application for managing cate
 - **Dynamic Form Generation:** Automated creation of UI forms based on JSON schemas.
 - **State Management:** Centralized stores with data normalization and type safety.
 - **Responsive Design:** Integrated with Bootstrap 5.3.
+- **Commit System:** Flexible data persistence with support for both real-time updates and manual batch commits.
+
+---
+
+## Data Persistence & Commit System
+
+The BoardManager implements a robust commit system to manage how data changes are sent to the backend. This system provides users with two distinct modes of operation:
+
+### 1. Automatic Commits (Real-time)
+When the "Commits automatisch speichern" (Automatic Commits) switch is **enabled**:
+- Every data operation (Adding, Updating, or Removing items/categories) is processed immediately.
+- The system bypasses the local commit queue and prepares the data for instant backend synchronization.
+- Users receive immediate feedback via the message system once the operation is successful.
+
+### 2. Manual Batch Commits
+When the "Commits automatisch speichern" switch is **disabled**:
+- **Commit Queueing:** All changes are temporarily stored in the `CommitStore`.
+- **UI Feedback:** A notification bar (`.commit-ctrl`) appears automatically as soon as there is at least one uncommitted change in the queue.
+- **Batch Processing:** Users can continue making multiple changes (e.g., editing several items).
+- **Manual Submit:** By clicking "Neuen Commit speichern", all queued changes are sent to the backend in a single batch operation.
+- **Queue Management:** Upon successful submission, the `CommitStore` is cleared, and the notification bar is hidden.
+
+### Technical Implementation
+- **`CommitStore`:** Acts as a local buffer for pending changes.
+- **`CommitController`:** Orchestrates the logic between the UI switch, the store, and the event bus.
+- **Event-Driven:** The system uses the central `EventBus` to listen for `commit:add` events emitted by data controllers, ensuring a decoupled architecture.
 
 ---
 

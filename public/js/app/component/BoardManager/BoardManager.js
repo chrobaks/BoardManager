@@ -16,6 +16,7 @@ import MessageView from './View/MessageView.js';
 import CategoryController from './Controller/CategoryController.js';
 import ItemController from './Controller/ItemController.js';
 import ModalController from './Controller/ModalController.js';
+import CommitController from './Controller/CommitController.js';
 
 // Factory
 import FormFactory from './Factory/FormFactory.js';
@@ -105,7 +106,7 @@ export default class BoardManager {
         );
 
         this.messageView = new MessageView(
-            this.container.querySelector('.container-message')
+            this.container.querySelector('.component-msg')
         );
     }
 
@@ -140,8 +141,19 @@ export default class BoardManager {
             this.formFactory
         );
 
+        this.commitController = new CommitController(
+            this.commitStore,
+            this.container,
+            this.eventBus
+        );
+
         this.categoryController.init();
         this.itemController.init();
         this.modalController.init();
+        this.commitController.init();
+
+        this.eventBus.on('message:show', (payload) => {
+            this.messageView.show(payload.text, payload.type);
+        });
     }
 }

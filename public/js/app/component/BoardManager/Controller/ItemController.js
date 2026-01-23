@@ -57,6 +57,11 @@ export default class ItemController extends AbstractController {
             const item = this.store.getById(this.uiState.getActiveId('item'));
             this.view.renderNodeData(item);
         }
+        this.events.emit('commit:add', {
+            action: 'update',
+            type: this.dataType,
+            payload: data
+        });
     }
 
     remove(id) {
@@ -66,5 +71,10 @@ export default class ItemController extends AbstractController {
         }
         this.events.emit('category:delete:item', {id:id});
         this.view.renderBoardItemsCount();
+        this.events.emit('commit:add', {
+            action: 'remove',
+            type: this.dataType,
+            payload: { id }
+        });
     }
 }
