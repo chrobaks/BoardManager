@@ -47,6 +47,7 @@ export default class CategoryController extends AbstractController {
     }
 
     update(data) {
+        const payload = this.store.normalize(data);
         this.store.update(data);
         if (this.uiState.isBoardView('category')) {
             this.view.render(this.store.all());
@@ -61,7 +62,7 @@ export default class CategoryController extends AbstractController {
         this.events.emit('commit:add', {
             action: 'update',
             type: this.dataType,
-            payload: data
+            payload: payload
         });
     }
 
@@ -78,18 +79,23 @@ export default class CategoryController extends AbstractController {
     }
 
     deleteItem(data) {
+        const payload = { itemId: data.id };
+        let emitAction = 'deleteItemFromAll';
+
         if (this.uiState.isBoardView('category')) {
             this.store.removeItemFromAll(data.id);
         } else {
             const cat = this.store.getById(Number(this.uiState.getActiveId('category')));
             this.store.removeItem(cat, data.id);
             this.events.emit('item:show:catItems', cat.items);
+            emitAction = 'deleteItemFromCategory';
+            payload.id = cat.id;
         }
         this.updateCategoryItemCount();
         this.events.emit('commit:add', {
-            action: 'deleteItem',
+            action: emitAction,
             type: 'category',
-            payload: { itemId: data.id }
+            payload: payload
         });
     }
 
@@ -102,7 +108,7 @@ export default class CategoryController extends AbstractController {
         this.events.emit('item:reset', {});
         this.view.renderBoardItemsCount();
         this.events.emit('commit:add', {
-            action: 'remove',
+            action: 'delete',
             type: this.dataType,
             payload: { id }
         });

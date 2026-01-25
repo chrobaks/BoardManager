@@ -17,7 +17,7 @@ export default class ModalController {
     openForm(obj = {}) {
         if (obj?.type && obj?.payload) {
             this.modal.setTitle(
-                obj.payload.id ? 'Daten bearbeiten' : 'Neue Daten anlegen'
+                obj.payload.id ? 'Edit data' : 'Create new data'
             );
 
             const formAction = obj.type + 'Form';
@@ -56,9 +56,9 @@ export default class ModalController {
 
     openPromptDelete (obj = {}) {
         if (obj?.type && obj.payload) {
-            this.modal.setTitle('Sicherheitsabfrage');
+            this.modal.setTitle('Security check');
             this.modal.setContent(
-                '<div class="alert alert-danger">Daten wirklich löschen?</div>',
+                '<div class="alert alert-danger">Really delete data?</div>',
                 {
                     type: 'prompt',
                     onSubmit: () => {

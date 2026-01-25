@@ -7,6 +7,7 @@ import CategoryStore from './State/CategoryStore.js';
 import ItemStore from './State/ItemStore.js';
 import CommitStore from './State/CommitStore.js';
 import UIState from './State/UIState.js';
+import CommitState from './State/CommitState.js';
 
 // View
 import BoardView from './View/BoardView.js';
@@ -77,6 +78,7 @@ export default class BoardManager {
             structuredClone(this.importData.json.formType.item || {})
         );
         this.commitStore = new CommitStore();
+        this.commitState = new CommitState();
         this.uiState = new UIState({
             mode: {
                 category: 'board',
@@ -143,6 +145,7 @@ export default class BoardManager {
 
         this.commitController = new CommitController(
             this.commitStore,
+            this.commitState,
             this.container,
             this.eventBus
         );

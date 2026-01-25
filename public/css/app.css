@@ -103,3 +103,26 @@ ul.content-box-list li h5:hover,
 /* -------------- Message Container -------------- */
 .container-msg {color: #ffcc00;}
 .container-msg i {margin-right:5px;}
+
+/* -------------- INFO TEXT -------------- */
+[data-info-exec] {cursor: help;}
+[data-info-text] {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity .5s ease, visibility .5s ease;
+    margin-top: -10px;
+    padding-top: 10px;
+}
+
+[data-info-exec="commit"]:hover + [data-info-text="commit"],
+[data-info-text="commit"]:hover {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+
+.commit-wrapper {
+    min-height: 130px;
+}

@@ -26,14 +26,23 @@ export default class Validator {
     }
 
     static checkRule(value, constraint) {
-        switch (constraint.rule) {
+        const rule = constraint?.rule ?? null;
+        const params = constraint?.params ?? null;
+        if (!rule) return true;
+
+        switch (rule) {
             case 'required':
                 return value !== undefined && value !== null && value.toString().trim() !== '';
             case 'min_length':
-                return String(value).length >= constraint.params.value;
+                if (!params || params && !params.value) return true;
+                return String(value).length >= params.value;
+            case 'max_length':
+                if (!params || params && !params.value) return true;
+                return String(value).length <= params.value;
             case 'range':
                 const val = Number(value);
-                return val >= constraint.params.min && val <= constraint.params.max;
+                if (!params || params && !params.min || params && !params.max) return true;
+                return val >= params.min && val <= params.max;
             default:
                 return true;
         }

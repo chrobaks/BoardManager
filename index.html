@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>BoardManager</title>
+    <title>BoardManager / PackageBoard</title>
     <link rel="stylesheet" href="public/css/bootstrap-5.3/bootstrap.css">
     <link rel="stylesheet" href="public/css/fas.min.css">
     <link rel="stylesheet" href="public/css/app.css">
@@ -15,43 +15,46 @@
         <div data-component="BoardManager">
             <div class="row">
                 <div class="col mt-5">
-                    <h1>BoardManager</h1>
+                    <h1>BoardManager / PackageBoard</h1>
                 </div>
             </div>
             <div class="row">
                 <div class="col-12 mt-3 container-msg">
                     <i class="fa fa-info-circle" aria-hidden="true"></i>
-                    <span class="component-msg">Configuration Board</span>
+                    <span class="component-msg">Configuration PackageBoard</span>
                 </div>
             </div>
-            <div class="row container-commit">
-                <div class="col-12 mt-3">
-                    <div class="alert alert-primary">
-
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" role="switch" id="switchSaveCommit" checked>
-                            <label class="form-check-label" for="switchSaveCommit">Commits automatisch speichern</label>
+            <div class="row mt-3 container-commit">
+                <div class="col-12 col-lg-6">
+                    <div class="alert alert-primary commit-wrapper">
+                        <div class="form-check form-switch info-wrapper">
+                            <input class="form-check-input" type="checkbox" role="switch" id="switchSaveCommit" data-event="commit:autoCommitSwitch">
+                            <label class="form-check-label" for="switchSaveCommit">Enable auto commit</label>
+                            <i class="fa fa-solid fa-info-circle" aria-hidden="true" data-info-exec="commit"></i>
+                            <p data-info-text="commit">
+                                If this setting is active, then every data change will be saved immediately in the backend.
+                            </p>
                         </div>
-                        <p>
-                            If this setting is active, then every data change will be saved immediately in the backend.
-                        </p>
-                        <div class="d-none commit-ctrl">
-                            <p><i class="fa fa-info-circle" aria-hidden="true"></i> Sie haben einen ungespeicherten Commit!</p>
-                            <button class="btn btn-primary btn-fa btn-sm" data-event="commit:submit"><i class="fa fa-file-import" aria-hidden="true"></i>Neuen Commit speichern</button>
-                        </div>
+                        <p class="alert alert-danger d-none commit-alert">Change to AutoCommit not possible until unsaved commits exist! Please save all open commits first!</p>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-6 d-none commit-ctrl">
+                    <div class="alert alert-primary commit-wrapper">
+                        <p><i class="fa fa-info-circle" aria-hidden="true"></i> You have an unsaved commit!</p>
+                        <button class="btn btn-primary btn-fa btn-sm" data-event="commit:submit"><i class="fa fa-file-import" aria-hidden="true"></i>Save new commit</button>
                     </div>
                 </div>
             </div>
             <div class="row mt-3">
                 <div class="col-12 col-lg-6 itemboard-wrapper">
-                    <button class="btn btn-primary btn-fa btn-sm mb-3" data-event="category:modal:form"><i class="fa fa-file-import" aria-hidden="true"></i>Neuen Task anlegen</button>
+                    <button class="btn btn-primary btn-fa btn-sm mb-3" data-event="category:modal:form"><i class="fa fa-file-import" aria-hidden="true"></i>Create new package</button>
                     <ul class="content-box-list category"></ul>
-                    <div class="text-end small container-msg me-1">Anzahl: <span data-item-key="itemBoardLength"></span></div>
+                    <div class="text-end small container-msg me-1">Number of packages: <span data-item-key="itemBoardLength"></span></div>
                 </div>
                 <div class="col-12 col-lg-6 mt-3 mt-md-0 mb-5 mb-md-0 itemboard-wrapper">
-                    <button class="btn btn-primary btn-fa btn-sm mb-3" data-event="item:modal:form"><i class="fa fa-file-import" aria-hidden="true"></i>Neues Item anlegen</button>
+                    <button class="btn btn-primary btn-fa btn-sm mb-3" data-event="item:modal:form"><i class="fa fa-file-import" aria-hidden="true"></i>Create a new bundle</button>
                     <ul class="content-box-list items product"></ul>
-                    <div class="text-end small container-msg me-1">Anzahl: <span data-item-key="itemBoardLength"></span></div>
+                    <div class="text-end small container-msg me-1">Number of bundles: <span data-item-key="itemBoardLength"></span></div>
                 </div>
                 <script type="application/json" src="public/js/app/data/itemBoard.json" data-source="BoardManager"></script>
                 <template data-template="categoryTemplate" data-source="BoardManager">
@@ -64,9 +67,9 @@
                             <h5 class="box-item-icon show" data-event="category:show"><span data-item-key="name"></span></h5>
                             <div class="box-item-info">
                                 <table><tbody>
-                                    <tr><td><b>Anzahl Elemente:</b></td><td> <span data-item-key="items_length">0</span></td></tr>
+                                    <tr><td><b>Number of bundles:</b></td><td> <span data-item-key="items_length">0</span></td></tr>
                                     <tr><td><b>Version:</b></td><td><span data-item-key="version"></span></td></tr>
-                                    <tr><td><b>Beschreibung:</b></td><td><span data-item-key="description"></span></td></tr>
+                                    <tr><td><b>Description:</b></td><td><span data-item-key="description"></span></td></tr>
                                     </tbody></table>
                             </div>
                         </div>
@@ -85,7 +88,7 @@
                         <div class="box-item-content">
                             <h5 class="box-item-icon show" data-event="item:show"><span data-item-key="name"></span></h5><div class="box-item-info">
                                 <table><tbody>
-                                    <tr><td><b>Beschreibung:</b></td><td><span data-item-key="description"></span></td></tr>
+                                    <tr><td><b>Description:</b></td><td><span data-item-key="description"></span></td></tr>
                                     </tbody></table>
                             </div>
                         </div>

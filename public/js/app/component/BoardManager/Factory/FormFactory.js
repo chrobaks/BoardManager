@@ -19,20 +19,26 @@ export default class FormFactory {
     }
 
     _build(key, data) {
-        const form = structuredClone(this.schema[key] || []);
+        try {
+            const form = structuredClone(this.schema[key] || []);
 
-        form.forEach(field => {
-            if (field.name === 'items') {
-                field.options = this.itemStore.all();
-                field.selected = data.items ?? [];
-            }
+            form.forEach(field => {
+                if (field.name === 'items') {
+                    field.options = this.itemStore.all();
+                    field.selected = data.items ?? [];
+                }
 
-            if (data[field.name] !== undefined) {
-                field.value = data[field.name];
-            }
-        });
+                if (data[field.name] !== undefined) {
+                    field.value = data[field.name];
+                }
+            });
 
-        return form;
+            return form;
+        } catch (e) {
+            console.error('ERROR:FormFactory:_build', e);
+
+            return null;
+        }
     }
 
     _getFormType(key) {

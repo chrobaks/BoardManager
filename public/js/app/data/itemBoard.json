@@ -1,10 +1,10 @@
 {
     "items":[
-        {"id":1,"name":"Item 1","value":"Item 1","description":"Lorem ipsum"},
-        {"id":2,"name":"Item 2","value":"Item 2","description":"Lorem ipsum"},
-        {"id":3,"name":"Item 3","value":"Item 3","description":"Lorem ipsum"},
-        {"id":4,"name":"Item 4","value":"Item 4","description":"Lorem ipsum"},
-        {"id":5,"name":"Item 5","value":"Item 5","description":"Lorem ipsum"}
+        {"id":1,"name":"Bundle 1","version":"1","description":"Lorem ipsum"},
+        {"id":2,"name":"Bundle 2","version":"1","description":"Lorem ipsum"},
+        {"id":3,"name":"Bundle 3","version":"1","description":"Lorem ipsum"},
+        {"id":4,"name":"Bundle 4","version":"1","description":"Lorem ipsum"},
+        {"id":5,"name":"Bundle 5","version":"1","description":"Lorem ipsum"}
     ],
     "category":[
         {"id":1,"name":"Core Package","description":"A basic package","version":"1","items":[1,2]},
@@ -14,15 +14,15 @@
     "categoryForm":[
         {"name":"id","value":0,"element":"input","type":"hidden","title":"Id","selector":"","required":"required"},
         {"name":"name","element":"input","type":"text","selector":"","title":"Name","required":"required","label":"Name"},
-        {"name":"description","element":"input","type":"text","selector":"","title":"Beschreibung","required":"required","label":"Beschreibung"},
+        {"name":"description","element":"input","type":"text","selector":"","title":"Description","required":"required","label":"Description"},
         {"name":"version","element":"input","type":"text","selector":"","title":"Version","required":"required","label":"Version"},
         {"name":"items","value":"","element":"select","type":"","title":"Elemente","selector":".one-row-select","options":[],"multiple":"multiple","label":"Elemente"}
     ],
     "itemsForm":[
         {"name":"id","value":0,"element":"input","type":"hidden","title":"Id","selector":"","required":"required"},
-        {"name":"name","element":"input","type":"text","selector":"","title":"Item Name","required":"required","label":"Item Name"},
-        {"name":"value","element":"input","type":"text","selector":"","title":"Item Value","required":"required","label":"Item Value"},
-        {"name":"description","element":"input","type":"text","selector":"","title":"Beschreibung","required":"required","label":"Beschreibung"}
+        {"name":"name","element":"input","type":"text","selector":"","title":"Bundle Name","required":"required","label":"Bundle Name"},
+        {"name":"version","element":"input","type":"text","selector":"","title":"Bundle version","required":"required","label":"Bundle version"},
+        {"name":"description","element":"input","type":"text","selector":"","title":"Description","required":"required","label":"Description"}
     ],
     "formType" : {
         "category": {
@@ -36,24 +36,24 @@
                 "type": "text",
                 "constraints": [
                     { "rule": "required", "message": "Name is mandatory" },
-                    { "rule": "max_length", "params": { "value": 100 }, "message": "Too much input" },
-                    { "rule": "min_length", "params": { "value": 2 }, "message": "Input is too short" }
+                    { "rule": "max_length", "params": { "value": 100 }, "message": "maximum characters 100" },
+                    { "rule": "min_length", "params": { "value": 2 }, "message": "Minimal characters 2" }
                 ]
             },
             "description": {
                 "type": "text",
                 "constraints": [
                     { "rule": "required", "message": "Description is mandatory" },
-                    { "rule": "max_length", "params": { "value": 225 }, "message": "Too much input" },
-                    { "rule": "min_length", "params": { "value": 2 }, "message": "Input is too short" }
+                    { "rule": "max_length", "params": { "value": 225 }, "message": "maximum characters 225" },
+                    { "rule": "min_length", "params": { "value": 2 }, "message": "Minimal characters 2" }
                 ]
             },
             "version": {
                 "type": "text",
                 "constraints": [
                     { "rule": "required", "message": "Version is mandatory" },
-                    { "rule": "max_length", "params": { "value": 30 }, "message": "Too much input" },
-                    { "rule": "min_length", "params": { "value": 1 }, "message": "Input is too short" }
+                    { "rule": "max_length", "params": { "value": 30 }, "message": "maximum characters 30" },
+                    { "rule": "min_length", "params": { "value": 1 }, "message": "Minimal characters 1" }
                 ]
             },
             "items": {
@@ -83,24 +83,24 @@
                 "type": "text",
                 "constraints": [
                     { "rule": "required", "message": "Name is mandatory" },
-                    { "rule": "max_length", "params": { "value": 100 }, "message": "Too much input" },
-                    { "rule": "min_length", "params": { "value": 2 }, "message": "Input is too short" }
+                    { "rule": "max_length", "params": { "value": 100 }, "message": "maximum characters 100" },
+                    { "rule": "min_length", "params": { "value": 2 }, "message": "Minimal characters 2" }
                 ]
             },
-            "value": {
+            "version": {
                 "type": "text",
                 "constraints": [
-                    { "rule": "required", "message": "Value is mandatory" },
-                    { "rule": "max_length", "params": { "value": 100 }, "message": "Too much input" },
-                    { "rule": "min_length", "params": { "value": 1 }, "message": "Input is too short" }
+                    { "rule": "required", "message": "Version is mandatory" },
+                    { "rule": "max_length", "params": { "value": 30 }, "message": "maximum characters 30" },
+                    { "rule": "min_length", "params": { "value": 1 }, "message": "Minimal characters 1" }
                 ]
             },
             "description": {
                 "type": "text",
                 "constraints": [
                     { "rule": "required", "message": "Description is mandatory" },
-                    { "rule": "max_length", "params": { "value": 225 }, "message": "Too much input" },
-                    { "rule": "min_length", "params": { "value": 2 }, "message": "Input is too short" }
+                    { "rule": "max_length", "params": { "value": 225 }, "message": "maximum characters 225" },
+                    { "rule": "min_length", "params": { "value": 2 }, "message": "Minimal characters 2" }
                 ]
             }
         }

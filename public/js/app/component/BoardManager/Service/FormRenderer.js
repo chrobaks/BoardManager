@@ -57,7 +57,7 @@ export default class FormRenderer
             obj.options.forEach(data => {
                 const option = document.createElement('option');
                 option.value = data.id;
-                option.innerText = data.value;
+                option.innerText = data.name;
 
                 if (obj?.selected?.includes(data.id)) {
                     option.setAttribute("selected","selected");

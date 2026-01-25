@@ -11,6 +11,10 @@ export default class CommitStore {
         return this.queue;
     }
 
+    length() {
+        return this.queue.length;
+    }
+
     clear() {
         this.queue = [];
     }

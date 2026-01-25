@@ -27,7 +27,8 @@ export default class DomEventManager {
                 ...target.dataset,
                 id: target.closest('[data-item-id]')?.dataset.itemId,
                 targetValue: target.value || target.dataset.value || null,
-                originalEvent: event
+                originalEvent: event,
+                targetElement: target
             });
         } catch (e) {
             console.error('Critical Error in DomEventManager:', e);

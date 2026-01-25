@@ -68,13 +68,14 @@ export default class ItemController extends AbstractController {
         if (this.uiState.isBoardView('category')) {
             this.store.remove(id);
             this.view.render(this.store.all());
+            this.events.emit('commit:add', {
+                action: 'delete',
+                type: this.dataType,
+                payload: { id }
+            });
         }
+
         this.events.emit('category:delete:item', {id:id});
         this.view.renderBoardItemsCount();
-        this.events.emit('commit:add', {
-            action: 'remove',
-            type: this.dataType,
-            payload: { id }
-        });
     }
 }
