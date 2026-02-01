@@ -5,6 +5,7 @@
     --color-body: #f5f5f5;
     --color-content: #d8d8e7;
     --color-orange: #f87103;
+    --color-gray-dark: #666;
 }
 body {
     font-family: 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
@@ -17,7 +18,7 @@ body {
 button.btn-fa i {margin-right: 10px;}
 /* -------------- Board Container -------------- */
 ul.content-box-list {display: flex; justify-content: flex-start;flex-wrap: wrap;width: 100%;margin: 0;padding:2px 0 0 2px ;list-style: none;background-color: transparent !important;border: 1px solid #ccc;border-radius: 0.25rem;}
-ul.content-box-list li {position: relative;border: 1px solid #ccc;border-radius: 0.25rem;min-width: calc((100% / 2) - 2px);margin: 0 2px 3px 0;padding: 10px 0 !important;color: #ccc;background-color: #666 !important;-webkit-user-select: none;-moz-user-select: none;user-select: none;font-size: 1rem;text-align: center;}
+ul.content-box-list li {position: relative;border: 1px solid #ccc;border-radius: 0.25rem;min-width: calc((100% / 2) - 2px);margin: 0 2px 3px 0;padding: 10px 0 !important;color: #ccc;background-color: var(--color-gray-dark); !important;-webkit-user-select: none;-moz-user-select: none;user-select: none;font-size: 1rem;text-align: center;}
 ul.content-box-list.items li {min-width: calc((100% / 3) - 2px) !important;}
 ul.content-box-list li.elements {width: 15%;}
 ul.content-box-list li.show {min-width: calc(100% - 2px);min-height: 300px;display: block !important;}
@@ -122,7 +123,124 @@ ul.content-box-list li h5:hover,
     pointer-events: auto;
 }
 
-
+/* -------------- COMMIT CTRL -------------- */
 .commit-wrapper {
-    min-height: 130px;
+    position: relative;
+    z-index: 100;
+}
+
+ .commit-ctrl-wrapper {
+     position: relative;
+     background-color: var(--color-gray-dark);
+     width: 100%;
+     border-radius: 0.25rem;
+     border: 1px solid #333;
+     padding: 0 10px 0 10px;
+     overflow: hidden;
+
+ }
+.commit-alert-board,
+.commit-list-board {
+    width: 100%;
+}
+
+.commit-alert-board.show-not {
+    width: 100%;
+    opacity: 0;
+    transition: opacity 5s ease;
+
+}
+.commit-alert-board {
+    opacity: 1;
+    transition: opacity 5s ease;
+}
+
+.commit-alert-board.show-not p.alert {
+    display: none;
+    transition: display 5s ease;
+}
+
+.commit-alert-board p.alert {
+    display: block;
+}
+
+.commit-list-board {
+    width: 100%;
+    border-radius: 0.25rem;
+    padding: 0;
+    border: 1px solid #333;
+    background-color: #ccc;
+    overflow: hidden;
+}
+.commit-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.commit-list li {
+    border-bottom: 1px solid #333;
+}
+.commit-list li.commit-list-item {
+    display: flex;
+    justify-content: start;
+}
+.commit-list li.commit-list-item.active {
+    background-color: var(--color-body);
+}
+.commit-list li:last-child{
+    border-bottom: 0;
+}
+.list-board-item-switch {
+    background-color: var(--color-gray-dark);
+    padding: 3px 10px 0 10px;
+    border-right: 1px solid #333;
+    margin-right: 1.0rem;
+    width: 160px;
+}
+
+.switcher-auto-commit {
+    padding:0.7rem 0.9rem 0.3rem 2.9rem;
+    border-right: 1px solid #333;
+}
+
+.switcher-auto-commit label {
+    color: #e5e5e5;
+}
+.commit-list-btn {
+    background-color: rgb(220, 53, 69);
+    padding: 3px 10px 0 10px;
+    border-right: 1px solid #333;
+    margin-right: 1.0rem;
+    width: 160px;
+}
+.commit-list-btn button {
+    background-color: transparent;
+    border: 0;
+    color: #e5e5e5;
+}
+.switcher-auto-commit:hover label,
+.btn-commit-ctrl:hover,
+.commit-list-btn button:hover {
+    color: #fff;
+}
+
+.commit-query-data {
+    color: #000;
+    padding-top:0.2rem;
+}
+
+
+.btn-commit-ctrl {
+    padding: 0 1.0rem;
+    border: 0;
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #333;
+    background-color: transparent;
+    color: #e5e5e5;
+}
+.btn-commit-ctrl[disabled] {
+    opacity: 0.5;
+}
+.btn-commit-ctrl:last-child {
+    /*border-right: 1px solid #333;*/
 }

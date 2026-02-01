@@ -66,12 +66,16 @@ export default class ItemController extends AbstractController {
 
     remove(id) {
         if (this.uiState.isBoardView('category')) {
+            // Needed, if the commit has a restore action
+            const itemCache = this.store.getById(id);
+
             this.store.remove(id);
             this.view.render(this.store.all());
             this.events.emit('commit:add', {
                 action: 'delete',
                 type: this.dataType,
-                payload: { id }
+                payload: { id },
+                cache: itemCache
             });
         }
 

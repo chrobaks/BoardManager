@@ -81,9 +81,10 @@ export default class CategoryController extends AbstractController {
     deleteItem(data) {
         const payload = { itemId: data.id };
         let emitAction = 'deleteItemFromAll';
+        let cache = [];
 
         if (this.uiState.isBoardView('category')) {
-            this.store.removeItemFromAll(data.id);
+            cache = this.store.removeItemFromAll(data.id);
         } else {
             const cat = this.store.getById(Number(this.uiState.getActiveId('category')));
             this.store.removeItem(cat, data.id);
@@ -95,7 +96,8 @@ export default class CategoryController extends AbstractController {
         this.events.emit('commit:add', {
             action: emitAction,
             type: 'category',
-            payload: payload
+            payload: payload,
+            cache: cache
         });
     }
 

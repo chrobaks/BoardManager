@@ -11,6 +11,7 @@ import CommitState from './State/CommitState.js';
 
 // View
 import BoardView from './View/BoardView.js';
+import CommitView from './View/CommitView.js';
 import MessageView from './View/MessageView.js';
 
 // Controller
@@ -107,6 +108,11 @@ export default class BoardManager {
             'itemsTemplate'
         );
 
+        this.commitView = new CommitView(
+            this.container.querySelector('.commit-wrapper'),
+            this.templateService,
+        );
+
         this.messageView = new MessageView(
             this.container.querySelector('.component-msg')
         );
@@ -145,6 +151,7 @@ export default class BoardManager {
 
         this.commitController = new CommitController(
             this.commitStore,
+            this.commitView,
             this.commitState,
             this.container,
             this.eventBus
