@@ -5,6 +5,30 @@ export default class CategoryStore extends AbstractStore {
         super(categories, typeSchema);
     }
 
+    /**
+     *
+     * @param catIdList
+     * @param itemId
+     * @returns {boolean}
+     */
+    reinsertItem(catIdList, itemId) {
+        try{
+            catIdList.forEach((catId) => {
+                const cat = this.getById(catId);
+                if (cat) {
+                    cat.items.push(itemId)
+                    cat.items = this.sortCatItemsAsc(cat.items);
+                    this.update(cat);
+                }
+            });
+            return true;
+        } catch (e) {
+            console.error('ERROR:CategoryStore:reinsertItem',e);
+        }
+
+        return false;
+    }
+
     removeItemFromAll(itemId) {
         const removedIdList = [];
         if (!itemId) return removedIdList;

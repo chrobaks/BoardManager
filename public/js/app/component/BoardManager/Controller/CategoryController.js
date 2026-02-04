@@ -16,54 +16,54 @@ export default class CategoryController extends AbstractController {
          * Unlike the UI click events automated in bindUserClickEvents(), these listeners
          * are explicitly registered to handle internal application logic and store updates.
          */
-        this.events.on('category:add', payload => this.add(payload));
-        this.events.on('category:update', payload => this.update(payload));
-        this.events.on('category:delete:item', payload => this.deleteItem(payload));
-        this.events.on('category:remove', payload => this.remove(payload));
-        this.events.on('category:reset', () =>  this.reset());
+        this.initEvents([
+            {action:'add'},
+            {action:'remove'},
+            {action:'reset'},
+            {action:'revert'},
+            {action:'update'},
+            {action:'revert:update'},
+            {action:'delete:item', callback :  payload => this.deleteItem(payload)},
+            {action:'revert:item', callback :  (payload) => this.revertItem(payload)},
+        ]);
+    }
+
+    revertItem(data) {
+        try {
+            const itemId = data?.payload?.itemId ?? null;
+
+            if (itemId && data?.cache) {
+                if (this.store.reinsertItem(data.cache, itemId)) {
+                    this.events.emit('commit:reverted', data.index + 1);
+                }
+            }
+        } catch (error) {
+            console.error('ERROR:CategoryController:revertItem', error);
+        }
     }
 
     show(data) {
         const payload = this.store.normalize(data);
         if (payload?.id && payload.id) {
-                const cat = this.store.getById(payload.id);
+            const cat = this.store.getById(payload.id);
 
-                if (!cat) return;
+            if (!cat) return;
 
-                let catItems = null;
+            let catItems = null;
 
-                this.view.toggleBoxItem(payload.id);
+            this.view.toggleBoxItem(payload.id);
 
-                if (this.uiState.isBoardView('category')) {
-                    catItems = cat.items;
-                    this.uiState.showCategory(payload.id);
-                    this.view.displayItemKeyBox('itemBoardLength', false);
-                } else {
-                    this.uiState.showBoard('category');
-                    this.view.displayItemKeyBox('itemBoardLength', true);
-                }
-                this.events.emit('item:show:catItems', catItems);
-        }
-    }
-
-    update(data) {
-        const payload = this.store.normalize(data);
-        this.store.update(data);
-        if (this.uiState.isBoardView('category')) {
-            this.view.render(this.store.all());
-        } else {
-            const cat = this.store.getById(this.uiState.getActiveId('category'));
-            if (cat && cat?.items) {
-                this.view.renderNodeData(cat);
-                this.events.emit('item:show:catItems', cat.items);
+            if (this.uiState.isBoardView(this.dataType)) {
+                catItems = cat.items;
+                this.uiState.showCategory(payload.id);
+                this.view.displayItemKeyBox('itemBoardLength', false);
+            } else {
+                this.uiState.showBoard(this.dataType);
+                this.view.displayItemKeyBox('itemBoardLength', true);
             }
 
+            this.events.emit('item:show:catItems', catItems);
         }
-        this.events.emit('commit:add', {
-            action: 'update',
-            type: this.dataType,
-            payload: payload
-        });
     }
 
     updateCategoryItemCount () {
@@ -83,37 +83,23 @@ export default class CategoryController extends AbstractController {
         let emitAction = 'deleteItemFromAll';
         let cache = [];
 
-        if (this.uiState.isBoardView('category')) {
+        if (this.uiState.isBoardView(this.dataType)) {
             cache = this.store.removeItemFromAll(data.id);
         } else {
-            const cat = this.store.getById(Number(this.uiState.getActiveId('category')));
+            const cat = this.store.getById(Number(this.uiState.getActiveId(this.dataType)));
             this.store.removeItem(cat, data.id);
             this.events.emit('item:show:catItems', cat.items);
             emitAction = 'deleteItemFromCategory';
-            payload.id = cat.id;
+            cache = [cat.id];
         }
         this.updateCategoryItemCount();
-        this.events.emit('commit:add', {
-            action: emitAction,
-            type: 'category',
-            payload: payload,
-            cache: cache
-        });
-    }
-
-    remove(id) {
-        this.store.remove(id);
-        this.view.render(this.store.all());
-        if (this.uiState.isCategoryView()) {
-            this.uiState.showBoard('category');
+        if (this.store.notEmpty(cache)) {
+            this.events.emit('commit:add', {
+                action: emitAction,
+                type: this.dataType,
+                payload: payload,
+                cache: cache
+            });
         }
-        this.events.emit('item:reset', {});
-        this.view.renderBoardItemsCount();
-        this.events.emit('commit:add', {
-            action: 'delete',
-            type: this.dataType,
-            payload: { id }
-        });
     }
-
 }

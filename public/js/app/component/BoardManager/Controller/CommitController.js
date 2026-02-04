@@ -1,3 +1,7 @@
+
+import CommitFactory from '../Factory/CommitFactory.js';
+import CommitService from '../Service/CommitService.js';
+
 export default class CommitController {
     /**
      * @param {CommitStore} store
@@ -7,11 +11,19 @@ export default class CommitController {
      * @param {EventBus} eventBus
      */
     constructor(store, commitView, commitState, container, eventBus) {
-        this.events = eventBus;
-        this.commitState = commitState;
-        this.view = commitView;
         this.store = store;
+        this.view = commitView;
+        this.commitState = commitState;
         this.container = container;
+        this.events = eventBus;
+        this.dataType = 'commit';
+        this.factory = new CommitFactory({
+            'delete': 'revert',
+            'deleteItemFromAll': 'revert:item',
+            'deleteItemFromCategory': 'revert:item',
+            'update': 'revert:update',
+        });
+        this.service = new CommitService(this.store, this.view);
     }
 
     init() {
@@ -19,29 +31,49 @@ export default class CommitController {
         this.commitState.setAutoEnabled(this.view.autoCommitSwitchIsChecked());
         this.view.showCommitCtrl(false);
 
-        this.events.on('commit:add', (payload) => this.handleAddCommit(payload));
         this.events.on('click:commit:submit', () => this.submitCommits());
         this.events.on('click:commit:show:list', () => this.showListCommits());
         this.events.on('click:commit:undo:exec', () => this.execCommitUndo());
         this.events.on('change:commit:autoCommitSwitch', (payload) => this.changeAutoCommitSwitch(payload));
         this.events.on('change:commit:undo', () => this.commitUndo());
         this.events.on('change:commit:undo:all', (payload) => this.commitUndoAll(payload));
+        this.events.on('commit:add', (payload) => this.handleAddCommit(payload));
+        this.events.on('commit:remove', () => this.removeCommit());
+        this.events.on('commit:reverted', (payload) => this.revertedCommit(payload));
     }
 
-    execCommitUndo () {
+    removeCommit() {
         const undoIndexList = this.view.getUndoCommitList();
 
         if (undoIndexList.length === 0) return;
 
-        this.store.deleteByIndex(undoIndexList);
-        this.view.removeCommitListItem(undoIndexList);
-
-        if (this.store.length() === 0) {
-            this.view.showListBoard(false);
-            this.view.showCommitCtrl(this.store.hasChanges());
-        } else {
-            this.view.renderCommitList(this.store.all());
+        if (this.store.setRevertList(undoIndexList)) {
+           this.revertedCommit(0);
         }
+    }
+
+    revertedCommit(index) {
+        if (index < this.store.revertList.length) {
+            const commit = this.store.getRevertByIndex(index);
+            if (commit && commit.type) {
+                this.events.emit(
+                    this.factory.getEventAction(commit),
+                    {index: index, cache: commit.cache, payload: commit.payload}
+                );
+            }
+        } else {
+            this.events.emit('category:reset', {});
+            this.events.emit('item:reset', {});
+            this.service.updateCommits();
+        }
+    }
+
+    execCommitUndo () {
+        this.events.emit('modal:prompt:delete', {
+            type: this.dataType,
+            payload: {},
+            msg:'Warning!!! All marked commits will be reverted. This will also change the current data! Do you want to continue?'
+        });
     }
     commitUndo () {
         this.view.renderActiveCommitItem();
@@ -76,16 +108,16 @@ export default class CommitController {
         }
     }
 
-    handleAddCommit(payload) {
-        console.log('handleAddCommit:', payload, this.view.autoCommitSwitchIsChecked());
+    handleAddCommit(commit) {
+        console.log('handleAddCommit:', commit);
         this.view.showAlertBoard(false);
         this.view.showListBoard(false);
         if (!this.view.autoCommitSwitchIsChecked()) {
-            this.store.add(payload);
+            this.store.add(commit);
             this.view.showCommitCtrl(this.store.hasChanges());
             this.events.emit('message:show', { text: 'New commit successfully created', type: 'success' });
         } else {
-            this.submitSingleCommit(payload);
+            this.submitSingleCommit(commit);
         }
     }
 

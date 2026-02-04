@@ -21,7 +21,7 @@ export default class EventBus {
             }
             this.events[event].forEach(handler => handler(payload));
         } catch (e) {
-            console.error('ERROR:EventBus:emit', e);
+            console.error('ERROR:EventBus:emit',event, e);
         }
     }
 

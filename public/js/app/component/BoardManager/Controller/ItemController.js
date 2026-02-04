@@ -16,11 +16,15 @@ export default class ItemController extends AbstractController {
          * Unlike the UI click events automated in bindUserClickEvents(), these listeners
          * are explicitly registered to handle internal application logic and store updates.
          */
-        this.events.on('item:add', payload => this.add(payload));
-        this.events.on('item:update', payload => this.update(payload));
-        this.events.on('item:show:catItems', catItems => this.showCatItems(catItems));
-        this.events.on('item:remove', id => this.remove(id));
-        this.events.on('item:reset', () => this.reset());
+        this.initEvents([
+            {action:'add'},
+            {action:'remove'},
+            {action:'reset'},
+            {action:'revert'},
+            {action:'update'},
+            {action:'revert:update'},
+            {action:'item:show:catItems', callback :  catItems => this.showCatItems(catItems)},
+        ]);
     }
 
     show(data) {
@@ -47,39 +51,5 @@ export default class ItemController extends AbstractController {
             this.view.render(this.store.all());
         }
         this.view.displayItemKeyBox('itemBoardLength', true);
-    }
-
-    update(data) {
-        this.store.update(data);
-        if (this.uiState.isBoardView('item')) {
-            this.view.render(this.store.all());
-        } else {
-            const item = this.store.getById(this.uiState.getActiveId('item'));
-            this.view.renderNodeData(item);
-        }
-        this.events.emit('commit:add', {
-            action: 'update',
-            type: this.dataType,
-            payload: data
-        });
-    }
-
-    remove(id) {
-        if (this.uiState.isBoardView('category')) {
-            // Needed, if the commit has a restore action
-            const itemCache = this.store.getById(id);
-
-            this.store.remove(id);
-            this.view.render(this.store.all());
-            this.events.emit('commit:add', {
-                action: 'delete',
-                type: this.dataType,
-                payload: { id },
-                cache: itemCache
-            });
-        }
-
-        this.events.emit('category:delete:item', {id:id});
-        this.view.renderBoardItemsCount();
     }
 }

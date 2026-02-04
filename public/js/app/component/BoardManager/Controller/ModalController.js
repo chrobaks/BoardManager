@@ -56,9 +56,10 @@ export default class ModalController {
 
     openPromptDelete (obj = {}) {
         if (obj?.type && obj.payload) {
+            const msg = (obj?.msg) ? obj.msg : 'Really delete data?';
             this.modal.setTitle('Security check');
             this.modal.setContent(
-                '<div class="alert alert-danger">Really delete data?</div>',
+                '<div class="alert alert-danger">' + msg + '</div>',
                 {
                     type: 'prompt',
                     onSubmit: () => {

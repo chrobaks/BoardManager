@@ -77,16 +77,20 @@ export default class CommitView {
     }
 
     renderActiveCommitItem () {
-        const itemList = this.getCommitItemList();
-        if (itemList.length) {
-            itemList.forEach(li => {
-                const checked = li.querySelector('input').checked;
-                if (checked && !li.classList.contains('active')) {
-                    li.classList.add('active');
-                } else if (!checked && li.classList.contains('active')) {
-                    li.classList.remove('active');
-                }
-            });
+        try {
+            const itemList = this.getCommitItemList();
+            if (itemList.length) {
+                itemList.forEach(li => {
+                    const checked = li.querySelector('input').checked;
+                    if (checked && !li.classList.contains('active')) {
+                        li.classList.add('active');
+                    } else if (!checked && li.classList.contains('active')) {
+                        li.classList.remove('active');
+                    }
+                });
+            }
+        } catch (e) {
+            console.error('ERROR:CommitView:renderActiveCommitItem', e);
         }
     }
 
@@ -96,7 +100,6 @@ export default class CommitView {
                 const commitInput = this.listBoard.querySelector(`li.commit-list-item input[data-commit-index="${index}"]`);
                 const commitItem = commitInput.closest('li.commit-list-item');
 
-                console.log('removeCommitListItem', commitItem);
                 if (commitItem) {
                     commitItem.remove();
                 }

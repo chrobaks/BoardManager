@@ -1,3 +1,5 @@
+import Utils from '../../../core/Utils.js';
+
 export default class AbstractStore {
     constructor(collection, schema = {}) {
         this.collection = collection;
@@ -12,20 +14,46 @@ export default class AbstractStore {
         return this.collection.find(c => c.id === id);
     }
 
-    add(category) {
-        this.collection.push(this.normalize(category));
+    add(obj) {
+        this.collection.push(this.normalize(obj));
+    }
+
+    addById(obj) {
+        try {
+            const index = this.collection.findIndex(item => item.id > obj.id);
+            if (index === -1) {
+                this.collection.push(obj);
+            } else {
+                this.collection.splice(index, 0, obj);
+            }
+        } catch (e) {
+            console.error('ERROR:AbstractStore:addById', e);
+        }
     }
 
     update(update) {
-        update = this.normalize(update);
-        const data = this.getById(update.id);
-        if (data) {
-            Object.assign(data, update);
+        try {
+            update = this.normalize(update);
+            const data = this.getById(update.id);
+            if (data) {
+                console.log('AbstractStore update', data);
+                Object.assign(data, update);
+            }
+
+            return true;
+        } catch (e) {
+            console.error('ERROR:AbstractStore:update', e);
         }
+
+        return false;
     }
 
     remove(id) {
         this.collection = this.collection.filter(c => c.id !== id);
+    }
+
+    sortCatItemsAsc(collection) {
+        return [...collection].sort((a, b) => a - b);
     }
 
     normalize(data) {
@@ -69,11 +97,15 @@ export default class AbstractStore {
 
             return result;
         } catch (e) {
-            console.error(`Normalization error in ${this.constructor.name}:`, e);
+            console.error(`ERROR:AbstractStore:Normalization error in ${this.constructor.name}:`, e);
             return data;
         }
     }
     currentCount() {
         return this.collection.length ?? 0;
+    }
+
+    notEmpty(collection) {
+        return (Utils.collectionLength(collection) > 0);
     }
 }
