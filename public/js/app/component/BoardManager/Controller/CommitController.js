@@ -22,6 +22,7 @@ export default class CommitController {
             'deleteItemFromAll': 'revert:item',
             'deleteItemFromCategory': 'revert:item',
             'update': 'revert:update',
+            'add': 'revert:add',
         });
         this.service = new CommitService(this.store, this.view);
     }
@@ -85,11 +86,10 @@ export default class CommitController {
 
     showListCommits () {
         const commitList = this.store.all();
-        const board = this.container.querySelector('.commit-list-board');
-        const show = board.classList.contains('d-none');
+        const show = this.view.listBoard.classList.contains('d-none');
 
         this.view.showAlertBoard(false);
-        if (commitList.length && board.classList.contains('d-none')) {
+        if (commitList.length && this.view.listBoard.classList.contains('d-none')) {
             this.view.renderCommitList(commitList);
         }
         this.view.changeDeleteAllSwitchCheck(false);

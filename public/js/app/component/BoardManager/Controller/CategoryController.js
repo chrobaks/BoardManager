@@ -18,6 +18,7 @@ export default class CategoryController extends AbstractController {
          */
         this.initEvents([
             {action:'add'},
+            {action:'revert:add'},
             {action:'remove'},
             {action:'reset'},
             {action:'revert'},

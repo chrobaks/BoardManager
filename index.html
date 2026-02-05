@@ -36,17 +36,18 @@
                     </div>
                     <div class="commit-board commit-list-board d-none mt-1">
                         <ul class="commit-list">
-                            <li class="d-flex justify-content-start">
+                            <li class="d-flex justify-content-start info-text">
                                 <div class="list-board-item-switch">
                                     <div class="form-check form-switch">
                                         <input class="form-check-input" type="checkbox" role="switch" id="selectAllCommitItems" data-event="commit:undo:all">
                                         <label class="form-check-label" for="selectAllCommitItems">Revert all</label>
                                     </div>
                                 </div>
-                                <div class="commit-query-data"></div>
+                                <div class="commit-query-data container-msg">Number of commits: <span data-item-key="commitLength">0</span></div>
                             </li>
-                            <li class="commit-list-btn d-flex justify-content-start">
-                                <button class="" data-event="commit:undo:exec"><i class="fa fa-trash me-2" aria-hidden="true"></i>Revert selection</button>
+                            <li class="commit-list-btn-wrapper d-flex justify-content-start info-text">
+                                <button class="commit-list-btn" data-event="commit:undo:exec"><i class="fa fa-trash me-2" aria-hidden="true"></i>Revert selection</button>
+                                <div class="commit-query-data">When a selection is made, all fields below the selection are automatically selected as well!</div>
                             </li>
                         </ul>
                     </div>
@@ -124,6 +125,5 @@
             </div>
         </div>
     </div>
-
 </body>
 </html>

@@ -128,10 +128,11 @@ export default class AbstractController {
             console.error('ERROR:AbstractController:add', e);
         }
     }
-
-    revertUpdate(data) {
-        if (data?.cache && this.store.update(data.cache)) {
+    revertAdd(data) {
+        if (data?.payload && data.payload?.id && this.store.remove(data.payload.id)) {
             this.events.emit('commit:reverted', data.index + 1);
+        } else {
+            console.error('ERROR:AbstractController:revertAd', data);
         }
     }
 
@@ -171,6 +172,14 @@ export default class AbstractController {
             this.events.emit('commit:add', emitPayload);
         } catch (e) {
             console.error('ERROR:AbstractController:update', e);
+        }
+    }
+
+    revertUpdate(data) {
+        if (data?.cache && this.store.update(data.cache)) {
+            this.events.emit('commit:reverted', data.index + 1);
+        } else {
+            console.error('ERROR:AbstractController:revertUpdate', data);
         }
     }
 

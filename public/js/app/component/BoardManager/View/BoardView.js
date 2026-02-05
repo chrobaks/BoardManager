@@ -16,80 +16,106 @@ export default class BoardView {
     }
 
     renderNodeData (data) {
-        const node = this.getElementContainer(data.id);
-        Object.keys(data).forEach(key => {
-            const element = node.querySelector('[data-item-key="' + key + '"]');
-            if (!element) return;
+        try {
+            const node = this.getElementContainer(data.id);
+            Object.keys(data).forEach(key => {
+                const element = node.querySelector('[data-item-key="' + key + '"]');
+                if (!element) return;
 
-            if (/^(input|select|option|textarea)$/i.test(element.tagName)) {
-                element.value = data[key];
-            } else {
-                element.innerText = data[key];
+                if (/^(input|select|option|textarea)$/i.test(element.tagName)) {
+                    element.value = data[key];
+                } else {
+                    element.innerText = data[key];
+                }
+            });
+            if (data?.items && data.items.length) {
+                this.renderDataItemKeyValue(node, 'items_length', data.items.length);
             }
-        });
-        if (data?.items && data.items.length) {
-            this.renderDataItemKeyValue(node, 'items_length', data.items.length);
+        } catch (e) {
+            console.error('ERROR:BoardView:renderNodeData', e);
         }
     }
 
     renderDataItemKeyValue (node, key, value) {
-        const element = node.querySelector('[data-item-key="' + key + '"]');
-        if (!element) return;
-        element.innerText = value;
+        try {
+            const element = node.querySelector('[data-item-key="' + key + '"]');
+            if (!element) return;
+            element.innerText = value;
+        } catch (e) {
+            console.error('ERROR:BoardView:renderDataItemKeyValue', e);
+        }
     }
 
     renderBoardItemsCount() {
-        this.renderDataItemKeyValue(this.container, 'itemBoardLength', this.getChildrenLength());
+        try {
+            this.renderDataItemKeyValue(this.container, 'itemBoardLength', this.getChildrenLength());
+        } catch (e) {
+            console.error('ERROR:BoardView:renderBoardItemsCount', e);
+        }
     }
 
     displayItemKeyBox(id, show = true)
     {
-        const elementContainer = this.container.querySelector('[data-item-key="' + id + '"]');
-        if (elementContainer) {
-            const act = !show ? "add" : "remove";
-            elementContainer.closest('div').classList[act]("d-none");
+        try {
+            const elementContainer = this.container.querySelector('[data-item-key="' + id + '"]');
+            if (elementContainer) {
+                const act = !show ? "add" : "remove";
+                elementContainer.closest('div').classList[act]("d-none");
+            }
+        } catch (e) {
+            console.error('ERROR:BoardView:displayItemKeyBox', e);
         }
     }
 
     createNode(json) {
-        const fragment = this.templateService.clone(this.templateId);
+        try {
+            const fragment = this.templateService.clone(this.templateId);
 
-        const node = fragment.querySelector('.content-box-item');
-        if (!node) {
-            console.warn('content-box-item not found in template');
-            return fragment;
-        }
-
-        node.dataset.itemId = json.id;
-
-        Object.keys(json).forEach(key => {
-            const element = node.querySelector('[data-item-key="' + key + '"]');
-            if (!element) return;
-
-            if (/^(input|select|option|textarea)$/i.test(element.tagName)) {
-                element.value = json[key];
-            } else {
-                element.innerText = json[key];
+            const node = fragment.querySelector('.content-box-item');
+            if (!node) {
+                console.warn('content-box-item not found in template');
+                return fragment;
             }
-        });
-        if (json?.items && json.items.length) {
-            this.renderDataItemKeyValue(node, 'items_length', json.items.length);
+
+            node.dataset.itemId = json.id;
+
+            Object.keys(json).forEach(key => {
+                const element = node.querySelector('[data-item-key="' + key + '"]');
+                if (!element) return;
+
+                if (/^(input|select|option|textarea)$/i.test(element.tagName)) {
+                    element.value = json[key];
+                } else {
+                    element.innerText = json[key];
+                }
+            });
+            if (json?.items && json.items.length) {
+                this.renderDataItemKeyValue(node, 'items_length', json.items.length);
+            }
+
+            return fragment;
+        } catch (e) {
+            console.error('ERROR:BoardView:createNode', e);
         }
 
-        return fragment;
+        return null;
     }
 
 
     toggleBoxItem (id)
     {
-        const elementContainer = this.getElementContainer(id);
-        if (elementContainer.classList.contains("show")) {
-            elementContainer.classList.remove("show");
-            this.setBoxItemDisplay (this.wrapper, "remove", "hidden");
-        } else {
-            this.setBoxItemDisplay (this.wrapper, "add", "hidden");
-            elementContainer.classList.remove("hidden");
-            elementContainer.classList.add("show");
+        try {
+            const elementContainer = this.getElementContainer(id);
+            if (elementContainer.classList.contains("show")) {
+                elementContainer.classList.remove("show");
+                this.setBoxItemDisplay(this.wrapper, "remove", "hidden");
+            } else {
+                this.setBoxItemDisplay(this.wrapper, "add", "hidden");
+                elementContainer.classList.remove("hidden");
+                elementContainer.classList.add("show");
+            }
+        } catch (e) {
+            console.error('ERROR:BoardView:toggleBoxItem', e);
         }
     }
 

@@ -102,7 +102,7 @@ ul.content-box-list li h5:hover,
     }
 }
 /* -------------- Message Container -------------- */
-.container-msg {color: #ffcc00;}
+.container-msg {color: #ffcc00 !important;}
 .container-msg i {margin-right:5px;}
 
 /* -------------- INFO TEXT -------------- */
@@ -169,7 +169,6 @@ ul.content-box-list li h5:hover,
     border-radius: 0.25rem;
     padding: 0;
     border: 1px solid #333;
-    background-color: #ccc;
     overflow: hidden;
 }
 .commit-list {
@@ -183,9 +182,13 @@ ul.content-box-list li h5:hover,
 .commit-list li.commit-list-item {
     display: flex;
     justify-content: start;
+    background-color: #ccc;
 }
 .commit-list li.commit-list-item.active {
     background-color: var(--color-body);
+}
+.commit-list li.info-text {
+    background-color: var(--background-color);
 }
 .commit-list li:last-child{
     border-bottom: 0;
@@ -202,22 +205,21 @@ ul.content-box-list li h5:hover,
     padding:0.7rem 0.9rem 0.3rem 2.9rem;
     border-right: 1px solid #333;
 }
-
+.commit-list li.commit-list-btn-wrapper .commit-query-data,
 .switcher-auto-commit label {
     color: #e5e5e5;
 }
 .commit-list-btn {
     background-color: rgb(220, 53, 69);
     padding: 3px 10px 0 10px;
+    border: none;
     border-right: 1px solid #333;
     margin-right: 1.0rem;
     width: 160px;
-}
-.commit-list-btn button {
-    background-color: transparent;
-    border: 0;
     color: #e5e5e5;
+    border-radius:0 0 0 0.25rem;
 }
+
 .switcher-auto-commit:hover label,
 .btn-commit-ctrl:hover,
 .commit-list-btn button:hover {

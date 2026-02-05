@@ -84,7 +84,7 @@ export default class Modal
     {
         switch (this.modalType) {
             case 'prompt':
-                this.modal.querySelector('button.save').innerHTML = "Delete data";
+                this.modal.querySelector('button.save').innerHTML = "Proceed";
                 this.modal.querySelector('button.close').innerHTML = "Cancel";
                 break;
             default:

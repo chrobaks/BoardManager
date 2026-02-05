@@ -49,7 +49,10 @@ export default class AbstractStore {
     }
 
     remove(id) {
+        const collectionLength = this.collection.length;
         this.collection = this.collection.filter(c => c.id !== id);
+
+        return (this.collection.length < collectionLength);
     }
 
     sortCatItemsAsc(collection) {

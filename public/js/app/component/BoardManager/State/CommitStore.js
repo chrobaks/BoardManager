@@ -35,7 +35,8 @@ export default class CommitStore {
             const newQueue = [];
 
             this.queue.forEach((entry, index) => {
-                if (undoIndexList.includes(index) && Utils.collectionLength(entry.cache)) {
+                if (entry.cache && !Utils.collectionLength(entry.cache)) {return;}
+                if (undoIndexList.includes(index)) {
                     newQueue.push(entry);
                 }
             });

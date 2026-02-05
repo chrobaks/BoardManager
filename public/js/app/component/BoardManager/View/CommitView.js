@@ -76,21 +76,48 @@ export default class CommitView {
         return idList;
     }
 
+    renderCommitCount() {
+        this.renderDataItemKeyValue(this.container, 'commitLength', this.getCommitItemListLength());
+    }
+
+    renderDataItemKeyValue (node, key, value) {
+        const element = node.querySelector('[data-item-key="' + key + '"]');
+        if (!element) return;
+        element.innerText = value;
+    }
+
     renderActiveCommitItem () {
         try {
             const itemList = this.getCommitItemList();
+            let isChecked = false;
             if (itemList.length) {
-                itemList.forEach(li => {
+                itemList.forEach((li, index) => {
                     const checked = li.querySelector('input').checked;
-                    if (checked && !li.classList.contains('active')) {
+                    if (!isChecked && checked) {isChecked = true;}
+                    if (isChecked && !li.classList.contains('active')) {
                         li.classList.add('active');
+                        if (!checked) {li.querySelector('input').checked = true;}
                     } else if (!checked && li.classList.contains('active')) {
                         li.classList.remove('active');
+                        this.resetCheckUpFromIndex(index, itemList);
                     }
                 });
             }
         } catch (e) {
             console.error('ERROR:CommitView:renderActiveCommitItem', e);
+        }
+    }
+
+    resetCheckUpFromIndex(indexStop, itemList) {
+        try {
+            itemList.forEach((li, index) => {
+                if (indexStop >= index) {
+                    li.querySelector('input').checked = false;
+                    li.classList.remove('active');
+                }
+            });
+        } catch (e) {
+            console.error('ERROR:CommitView:resetCheckUpFromIndex', e);
         }
     }
 
@@ -112,7 +139,7 @@ export default class CommitView {
     renderCommitList (commits) {
         try {
             const ul = this.listBoard.querySelector('ul');
-            const btn = ul.querySelector('.commit-list-btn');
+            const btn = ul.querySelector('.commit-list-btn-wrapper');
             let cloneLi = this.templateService.clone('commitListItemTemplate');
             ul.querySelectorAll('li.commit-list-item ').forEach(li => ul.removeChild(li));
             if (!cloneLi) return;
@@ -125,6 +152,7 @@ export default class CommitView {
                 clnForInput.setAttribute('for', `commit-${index}`);
                 btn.before(cloneLi.cloneNode(true));
             });
+            this.renderCommitCount();
         } catch (e) {
             console.error('ERROR:CommitView:renderCommitList', e);
         }
@@ -132,5 +160,9 @@ export default class CommitView {
 
     getCommitItemList () {
         return this.listBoard.querySelectorAll('li.commit-list-item');
+    }
+
+    getCommitItemListLength () {
+        return this.listBoard.querySelectorAll('li.commit-list-item').length;
     }
 }
