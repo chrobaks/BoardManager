@@ -62,7 +62,6 @@ export default class CategoryController extends AbstractController {
                 this.uiState.showBoard(this.dataType);
                 this.view.displayItemKeyBox('itemBoardLength', true);
             }
-
             this.events.emit('item:show:catItems', catItems);
         }
     }

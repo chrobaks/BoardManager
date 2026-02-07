@@ -13,7 +13,7 @@ export default class CommitView {
         this.listBoard = this.container.querySelector('.commit-list-board');
         this.btnCommitCtrl = this.container.querySelectorAll('.btn-commit-ctrl');
         this.alertBoard = this.container.querySelector('.commit-alert-board');
-        this.autoCommitSwitch = this.container.querySelector('#switchAutoCommit');
+        this.autoCommitSwitch = this.container.querySelector('.switchAutoCommit');
     }
 
     showCommitCtrl(hasChanges) {

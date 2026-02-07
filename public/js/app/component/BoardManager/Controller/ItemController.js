@@ -24,7 +24,7 @@ export default class ItemController extends AbstractController {
             {action:'revert'},
             {action:'update'},
             {action:'revert:update'},
-            {action:'item:show:catItems', callback :  catItems => this.showCatItems(catItems)},
+            {action:'show:catItems', callback :  catItems => this.showCatItems(catItems)},
         ]);
     }
 

@@ -36,7 +36,6 @@ export default class AbstractStore {
             update = this.normalize(update);
             const data = this.getById(update.id);
             if (data) {
-                console.log('AbstractStore update', data);
                 Object.assign(data, update);
             }
 
