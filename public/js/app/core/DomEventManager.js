@@ -12,9 +12,13 @@ export default class DomEventManager {
     }
 
     init() {
-        this.supportedEvents.forEach(eventType => {
-            this.root.addEventListener(eventType, (event) => this.handleEvent(event));
-        });
+        try {
+            this.supportedEvents.forEach(eventType => {
+                this.root.addEventListener(eventType, (event) => this.handleEvent(event));
+            });
+        } catch (e) {
+            console.error('Error:DomEventManager:init', e);
+        }
     }
     handleEvent(event) {
         try {
@@ -31,7 +35,7 @@ export default class DomEventManager {
                 targetElement: target
             });
         } catch (e) {
-            console.error('Critical Error in DomEventManager:', e);
+            console.error('Error:DomEventManager:handleEvent', e, event);
         }
     }
 }

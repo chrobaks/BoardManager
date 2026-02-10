@@ -1,4 +1,5 @@
 import { BOARD_EVENT_ACTIONS } from '../BoardManager.js';
+import BoardService from '../Service/BoardService.js';
 
 export default class AbstractController {
     /**
@@ -7,29 +8,40 @@ export default class AbstractController {
      * @param view
      * @param eventBus
      * @param idService
+     * @param uiState
      * @param dataType
      */
-    constructor(store, view, eventBus, idService, dataType) {
-        this.store = store;
-        this.view = view;
-        this.events = eventBus;
-        this.idService = idService;
-        this.dataType = dataType;
-        this.error = [];
+    constructor(store, view, eventBus, idService, uiState, dataType) {
+        try {
+            this.store = store;
+            this.view = view;
+            this.events = eventBus;
+            this.idService = idService;
+            this.uiState = uiState;
+            this.dataType = dataType;
+            this.boardService = new BoardService({store, view, eventBus, uiState, dataType});
+            this.error = [];
+        } catch (e) {
+            console.error('ERROR:AbstractController:initListHeightAndEnableScroll', e);
+        }
+    }
+
+    init(eventList) {
+        this.view.render(this.store.all());
+        this.initListHeightAndEnableScroll();
+        /**
+         * Data Lifecycle & Domain Logic Events
+         * Unlike the UI click events automated in bindUserClickEvents(), these listeners
+         * are explicitly registered to handle internal application logic and store updates.
+         */
+        this.initEvents(eventList);
     }
 
     initListHeightAndEnableScroll() {
         try {
-            const threshold = this.view.getScrollThreshold();
-            const currentCount = this.view.getChildrenLength();
-
-            if (currentCount > threshold) {
-                this.view.freezeCurrentListHeightAndEnableScroll();
-            }
-
-            this.view.applyScrollLimitIfNeeded(threshold);
+            this.view.applyScrollLimitIfNeeded();
         } catch (e) {
-            console.error('ERROR:AbstractController:initListHeightAndEnableScroll', e);
+            console.error('ERROR:AbstractController:constructor', e);
         }
     }
 
@@ -50,6 +62,8 @@ export default class AbstractController {
                     this.events.on(eventAct, callback);
                 });
             }
+
+            this.bindUserClickEvents();
         } catch (e) {
             console.error('ERROR:AbstractController:initEvents', e);
         }
@@ -104,19 +118,11 @@ export default class AbstractController {
 
     add(data) {
         try {
-            const threshold = this.view.getScrollThreshold();
-            const currentCount = this.store.currentCount();
-
-            if (currentCount === threshold) {
-                this.view.freezeCurrentListHeightAndEnableScroll();
-            }
-
             data.id = this.idService.next();
             this.store.add(data);
             this.view.render(this.store.all());
             this.view.renderBoardItemsCount();
-
-            this.view.applyScrollLimitIfNeeded(threshold);
+            this.view.applyScrollLimitIfNeeded();
             this.view.scrollIntoView();
 
             this.events.emit('commit:add', {
@@ -138,38 +144,19 @@ export default class AbstractController {
 
     update(data) {
         try {
-            const payload = this.store.normalize(data);
-            const id = payload?.id ?? null;
-
-            if (!id) { return; }
-
-            const cache = {...this.store.getById(id)};
-            if (!cache) { return; }
-
-            const emitPayload = {
-                action: 'update',
-                type: this.dataType,
-                payload: payload,
-                cache
+            const {payload, cache} = this.boardService.getCommitArguments(data);
+            if (!payload || !cache) {
+                console.error('ERROR:AbstractController:update getCommitArguments');
+                return;
             }
-
-            if (!this.store.update(data)) { return; }
-
-            if (this.uiState.isBoardView(this.dataType)) {
-                this.view.render(this.store.all());
-            } else {
-                if (this.dataType === 'category') {
-                    const cat = this.store.getById(this.uiState.getActiveId(this.dataType));
-                    if (cat && cat?.items) {
-                        this.view.renderNodeData(cat);
-                        this.events.emit('item:show:catItems', cat.items);
-                    }
-                } else if (this.dataType === 'item') {
-                    const item = this.store.getById(this.uiState.getActiveId(this.dataType));
-                    this.view.renderNodeData(item);
-                }
+            if  (this.boardService.updateByDataType(data)) {
+                this.events.emit('commit:add', {
+                    action: 'update',
+                    type: this.dataType,
+                    payload: payload,
+                    cache
+                });
             }
-            this.events.emit('commit:add', emitPayload);
         } catch (e) {
             console.error('ERROR:AbstractController:update', e);
         }
@@ -218,46 +205,33 @@ export default class AbstractController {
     }
 
     remove(id) {
-        // Needed, if the commit has a restore action
-        const itemCache = this.store.getById(id);
-        const commitConf = {
-            action: 'delete',
-            type: this.dataType,
-            payload: { id },
-            cache: itemCache
-        };
-        let setCommit = false;
+        try {
+            // Needed, if the commit has a restore action
+            const itemCache = {...this.store.getById(id)};
+            let setCommit = false;
 
-        if (this.dataType === 'category') {
-            this.store.remove(id);
-            this.view.render(this.store.all());
-
-            if (this.uiState.isCategoryView()) {
-                this.uiState.showBoard('category');
-            }
-            this.events.emit('item:reset', {});
-            this.view.renderBoardItemsCount();
-
-            setCommit = true;
-        }
-
-        if (this.dataType === 'item') {
-            this.events.emit('category:delete:item', {id:id});
-
-            if (this.uiState.isBoardView('category')) {
-                this.store.remove(id);
-                this.view.render(this.store.all());
-            }
-
-            if (!this.uiState.isCategoryView()) {
+            if (this.dataType === 'category') {
+                this.boardService.removeCategory(id);
                 setCommit = true;
             }
 
+            if (this.dataType === 'item') {
+                this.boardService.removeItem(id);
+                if (!this.uiState.isCategoryView()) {
+                    setCommit = true;
+                }
+            }
             this.view.renderBoardItemsCount();
-        }
-
-        if (setCommit) {
-            this.events.emit('commit:add', commitConf);
+            if (setCommit) {
+                this.events.emit('commit:add', {
+                    action: 'delete',
+                    type: this.dataType,
+                    payload: {id},
+                    cache: itemCache
+                });
+            }
+        } catch (e) {
+            console.error('ERROR:AbstractController:remove', e);
         }
     }
 }

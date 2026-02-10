@@ -1,22 +1,10 @@
 import AbstractController from './AbstractController.js';
 
 export default class ItemController extends AbstractController {
-    constructor(store, view, eventBus, idService) {
-        super(store, view, eventBus, idService, 'item');
-    }
+    constructor(store, view, eventBus, idService, uiState) {
+        super(store, view, eventBus, idService, uiState, 'item');
 
-    init() {
-        this.view.render(this.store.all());
-
-        this.initListHeightAndEnableScroll();
-
-        this.bindUserClickEvents();
-        /**
-         * Data Lifecycle & Domain Logic Events
-         * Unlike the UI click events automated in bindUserClickEvents(), these listeners
-         * are explicitly registered to handle internal application logic and store updates.
-         */
-        this.initEvents([
+        this.init([
             {action:'add'},
             {action:'revert:add'},
             {action:'remove'},
@@ -32,11 +20,11 @@ export default class ItemController extends AbstractController {
         const payload = this.store.normalize(data);
         if (payload?.id && payload.id) {
             this.view.toggleBoxItem(payload.id);
-            if (this.uiState.isBoardView('item')) {
+            if (this.uiState.isBoardView(this.dataType)) {
                 this.uiState.showItem(payload.id);
                 this.view.displayItemKeyBox('itemBoardLength', false);
             } else {
-                this.uiState.showBoard('item');
+                this.uiState.showBoard(this.dataType);
                 this.view.displayItemKeyBox('itemBoardLength', true);
             }
         }

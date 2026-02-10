@@ -131,17 +131,17 @@ export default class BoardManager {
             this.categoryStore,
             this.categoryView,
             this.eventBus,
-            this.categoryIdService
+            this.categoryIdService,
+            this.uiState
         );
-        this.categoryController.setUIState(this.uiState);
 
         this.itemController = new ItemController(
             this.itemStore,
             this.itemView,
             this.eventBus,
-            this.itemIdService
+            this.itemIdService,
+            this.uiState
         );
-        this.itemController.setUIState(this.uiState);
 
         this.modalController = new ModalController(
             this.modal,
@@ -157,8 +157,6 @@ export default class BoardManager {
             this.eventBus
         );
 
-        this.categoryController.init();
-        this.itemController.init();
         this.modalController.init();
         this.commitController.init();
 

@@ -1,18 +1,24 @@
+import BoardViewFactory from '../Factory/BoardViewFactory.js';
+
 export default class BoardView {
     constructor(wrapper, templateService, templateId) {
         this.container = wrapper.closest('div.itemboard-wrapper');
         this.wrapper = wrapper;
         this.templateService = templateService;
         this.templateId = templateId;
+        this.factory = new BoardViewFactory(this.templateService);
     }
 
     render(collection) {
-        this.wrapper.innerHTML = '';
-        collection.forEach(data => {
-            this.wrapper.appendChild(this.createNode(data));
-        });
-        this.renderBoardItemsCount();
-
+        try {
+            this.wrapper.innerHTML = '';
+            collection.forEach(data => {
+                this.wrapper.appendChild(this.createNode(data));
+            });
+            this.renderBoardItemsCount();
+        } catch (e) {
+            console.error('ERROR:BoardView:render', e);
+        }
     }
 
     renderNodeData (data) {
@@ -69,26 +75,7 @@ export default class BoardView {
 
     createNode(json) {
         try {
-            const fragment = this.templateService.clone(this.templateId);
-
-            const node = fragment.querySelector('.content-box-item');
-            if (!node) {
-                console.warn('content-box-item not found in template');
-                return fragment;
-            }
-
-            node.dataset.itemId = json.id;
-
-            Object.keys(json).forEach(key => {
-                const element = node.querySelector('[data-item-key="' + key + '"]');
-                if (!element) return;
-
-                if (/^(input|select|option|textarea)$/i.test(element.tagName)) {
-                    element.value = json[key];
-                } else {
-                    element.innerText = json[key];
-                }
-            });
+            const {fragment, node} = this.factory.createNode(this.templateId, json);
             if (json?.items && json.items.length) {
                 this.renderDataItemKeyValue(node, 'items_length', json.items.length);
             }
@@ -146,65 +133,66 @@ export default class BoardView {
     }
 
     scrollIntoView() {
-        const el = this.wrapper;
-        const rect = el.getBoundingClientRect();
-        const isUlVisible = rect.top < window.innerHeight && rect.bottom > 0;
+        try {
+            const el = this.wrapper;
+            const rect = el.getBoundingClientRect();
+            const isUlVisible = rect.top < window.innerHeight && rect.bottom > 0;
 
-        if (el.scrollHeight <= el.clientHeight) {
-            return;
-        }
-
-        if (!isUlVisible) {
-            el.scrollIntoView({ block: 'start', behavior: 'smooth' });
-        }
-
-        window.requestAnimationFrame(() => {
-            const top = el.scrollHeight;
-            if (typeof el.scrollTo === 'function') {
-                el.scrollTo({ top, behavior: 'smooth' });
-            } else {
-                el.scrollTop = top;
+            if (el.scrollHeight <= el.clientHeight) {
+                return;
             }
-        });
-    }
-    freezeCurrentListHeightAndEnableScroll() {
-        const ul = this.wrapper;
-        const height = Math.ceil(ul.getBoundingClientRect().height);
 
-        ul.style.maxHeight = `${height}px`;
-        ul.style.overflowY = 'auto';
-        ul.style.overflowX = 'hidden';
-        ul.style.webkitOverflowScrolling = 'touch';
+            if (!isUlVisible) {
+                el.scrollIntoView({block: 'start', behavior: 'smooth'});
+            }
 
-    }
-
-    applyScrollLimitIfNeeded(threshold) {
-
-        threshold = threshold ?? this.getScrollThreshold();
-
-        const ul = this.wrapper;
-        const count = this.getChildrenLength();
-
-        if (count <= threshold) {
-            ul.style.maxHeight = '';
-            ul.style.overflowY = '';
-            ul.style.overflowX = '';
-            ul.style.webkitOverflowScrolling = '';
-            return;
+            window.requestAnimationFrame(() => {
+                const top = el.scrollHeight;
+                if (typeof el.scrollTo === 'function') {
+                    el.scrollTo({top, behavior: 'smooth'});
+                } else {
+                    el.scrollTop = top;
+                }
+            });
+        } catch (e) {
+            console.error('ERROR:BoardView:scrollIntoView', e);
         }
+    }
 
-        const first = this.getFirstChildNode();
-        const last = this.getChildAt(threshold - 1);
-        if (!first || !last) return;
+    applyScrollLimitIfNeeded() {
+        try {
+            const threshold= this.getScrollThreshold();
 
-        const firstRect = first.getBoundingClientRect();
-        const lastRect = last.getBoundingClientRect();
-        const height = Math.ceil(lastRect.bottom - firstRect.top);
+            const ul = this.wrapper;
+            const count = this.getChildrenLength();
 
-        ul.style.maxHeight = `${height}px`;
-        ul.style.overflowY = 'auto';
-        ul.style.overflowX = 'hidden';
-        ul.style.webkitOverflowScrolling = 'touch';
+            if (count <= threshold) {
+                ul.style.maxHeight = '';
+                ul.style.overflowY = '';
+                ul.style.overflowX = '';
+                ul.style.webkitOverflowScrolling = '';
+                return;
+            }
+
+            const first = this.getFirstChildNode();
+            const last = this.getChildAt(threshold - 1);
+            if (!first || !last) return;
+
+            const firstRect = first.getBoundingClientRect();
+            const lastRect = last.getBoundingClientRect();
+            let height = Math.ceil(lastRect.bottom - firstRect.top);
+
+            if (first.offsetHeight) {
+                height = height + (first.offsetHeight / 2);
+            }
+
+            ul.style.maxHeight = `${height}px`;
+            ul.style.overflowY = 'auto';
+            ul.style.overflowX = 'hidden';
+            ul.style.webkitOverflowScrolling = 'touch';
+        } catch (e) {
+            console.error('ERROR:BoardView:applyScrollLimitIfNeeded', e);
+        }
     }
 
 
