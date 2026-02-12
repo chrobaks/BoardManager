@@ -3,16 +3,25 @@ export default class DomEventManager {
     /**
      * @param {HTMLElement} rootElement
      * @param {EventBus} eventBus
+     * @param options
      */
-    constructor(rootElement, eventBus) {
+    constructor(rootElement, eventBus, options = {}) {
         this.root = rootElement;
         this.eventBus = eventBus;
-        this.supportedEvents = ['click', 'input', 'change', 'submit', 'mouseover', 'mouseleave', 'keyup'];
-        this.init();
+        this.defaultEvents = ['click', 'input', 'change', 'submit', 'keyup', 'contextmenu'];
+
+        this.init(options);
     }
 
-    init() {
+    init(options) {
         try {
+            if (options?.override) {
+                this.supportedEvents = options.events || [...this.defaultEvents];
+            } else {
+                this.supportedEvents = [...new Set([...this.defaultEvents, ...(options?.additionalEvents || [])])];
+            }
+
+            this.addDesktopHoverEvents();
             this.supportedEvents.forEach(eventType => {
                 this.root.addEventListener(eventType, (event) => this.handleEvent(event));
             });
@@ -36,6 +45,15 @@ export default class DomEventManager {
             });
         } catch (e) {
             console.error('Error:DomEventManager:handleEvent', e, event);
+        }
+    }
+
+    addDesktopHoverEvents() {
+        const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+        if (!isTouchDevice) {
+            if (!this.supportedEvents.includes('mouseover')) this.supportedEvents.push('mouseover');
+            if (!this.supportedEvents.includes('mouseout')) this.supportedEvents.push('mouseout');
         }
     }
 }

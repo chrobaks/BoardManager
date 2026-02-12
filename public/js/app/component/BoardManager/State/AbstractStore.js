@@ -1,9 +1,11 @@
 import Utils from '../../../core/Utils.js';
+import StoreFactory from '../Factory/StoreFactory.js';
 
 export default class AbstractStore {
     constructor(collection, schema = {}) {
         this.collection = collection;
         this.schema = schema;
+        this.factory = new StoreFactory(schema);
     }
 
     all() {
@@ -15,7 +17,19 @@ export default class AbstractStore {
     }
 
     add(obj) {
-        this.collection.push(this.normalize(obj));
+        try {
+            const lengthBefore = this.collection.length;
+            const collectionItem = this.factory.normalize(obj);
+            if (Object.keys(collectionItem).length) {
+                this.collection.push(this.factory.normalize(obj));
+            }
+
+            return lengthBefore < this.collection.length;
+        } catch (e) {
+            console.error('ERROR:AbstractStore:add', e);
+        }
+
+        return false;
     }
 
     addById(obj) {
@@ -33,13 +47,13 @@ export default class AbstractStore {
 
     update(update) {
         try {
-            update = this.normalize(update);
+            update = this.factory.normalize(update);
             const data = this.getById(update.id);
             if (data) {
                 Object.assign(data, update);
-            }
 
-            return true;
+                return true;
+            }
         } catch (e) {
             console.error('ERROR:AbstractStore:update', e);
         }
@@ -59,49 +73,7 @@ export default class AbstractStore {
     }
 
     normalize(data) {
-        try {
-            const result = {};
-
-            Object.keys(this.schema).forEach(key => {
-                if (key in data) {
-                    const fieldDefinition = this.schema[key];
-                    const type = typeof fieldDefinition === 'object' ? fieldDefinition.type : fieldDefinition;
-                    const value = data[key];
-
-                    switch (type) {
-                        case 'number':
-                            result[key] = value !== null && value !== '' ? Number(value) : null;
-                            break;
-
-                        case 'text':
-                        case 'string':
-                            result[key] = String(value);
-                            break;
-
-                        case 'collection':
-                        case 'number[]':
-                            result[key] = Array.isArray(value)
-                                ? value.map(Number)
-                                : (value ? [Number(value)] : []);
-                            break;
-
-                        case 'string[]':
-                            result[key] = Array.isArray(value)
-                                ? value.map(String)
-                                : (value ? [String(value)] : []);
-                            break;
-
-                        default:
-                            result[key] = value;
-                    }
-                }
-            });
-
-            return result;
-        } catch (e) {
-            console.error(`ERROR:AbstractStore:Normalization error in ${this.constructor.name}:`, e);
-            return data;
-        }
+        return this.factory.normalize(data);
     }
     currentCount() {
         return this.collection.length ?? 0;

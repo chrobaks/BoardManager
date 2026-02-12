@@ -1,14 +1,38 @@
 export default class BoardService {
+    /**
+     *
+     * @param dependencies
+     * @param dependencies.store instances of Store
+     * @param dependencies.view instances of  BoardView
+     * @param dependencies.eventBus instances of  EventBus
+     * @param dependencies.idService instances of  IdService
+     * @param dependencies.uiState UiState
+     * @param dependencies.dataType string
+     */
     constructor(dependencies) {
         try {
             this.store = dependencies.store ?? null;
             this.view = dependencies.view ?? null;
             this.events = dependencies.eventBus ?? null;
+            this.idService = dependencies.idService ?? null;
             this.uiState = dependencies.uiState ?? null;
             this.dataType = dependencies.dataType ?? null;
         } catch(err) {
             console.error('ERROR:BoardService:constructor', err);
         }
+    }
+
+    addData(data) {
+        data.id = this.idService.next();
+        const addOk = this.store.add(data);
+        if (addOk) {
+            this.view.render(this.store.all());
+            this.view.renderBoardItemsCount();
+            this.view.applyScrollLimitIfNeeded();
+            this.view.scrollIntoView();
+        }
+
+        return addOk;
     }
 
     updateByDataType(data) {
@@ -37,7 +61,7 @@ export default class BoardService {
         const cat = this.store.getById(this.uiState.getActiveId(this.dataType));
         if (cat && cat?.items) {
             this.view.renderNodeData(cat);
-            this.events.emit('item:show:catItems', cat.items);
+            this.events.emit('item:show:cat:items', cat.items);
             return true;
         }
 
@@ -52,6 +76,20 @@ export default class BoardService {
         }
 
         return false;
+    }
+
+    deleteItemFromCategory(data) {
+        try {
+            const activeId = this.uiState.getActiveId(this.dataType);
+            if (!activeId) { return null; }
+            const cat = this.store.getById(activeId);
+            this.store.removeItem(cat, data.id);
+
+            return cat;
+        } catch(err) {
+            console.error('ERROR:BoardService:deleteItemFromCategory', err);
+        }
+        return null;
     }
 
     removeCategory(id) {

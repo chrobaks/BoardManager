@@ -1,7 +1,13 @@
 
+import Utils from "../../../core/Utils.js";
+
 export default class BoardViewFactory {
     constructor(templateService) {
         this.templateService = templateService;
+    }
+
+    firstCharUpperCase(str, formateToLowerCase = true) {
+        return Utils.firstCharUpperCase(str, formateToLowerCase);
     }
 
     createNode(templateId, json) {

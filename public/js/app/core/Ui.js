@@ -161,4 +161,14 @@ export default class Ui
             parent.append(element);
         });
     }
+
+    static isMobile () {
+        if (navigator?.userAgentData?.mobile) {
+            return navigator.userAgentData.mobile;
+        }
+        const isUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        const isIPad = navigator.maxTouchPoints > 1 && /Macintosh/.test(navigator.userAgent);
+
+        return isUA || isIPad;
+    }
 }

@@ -5,6 +5,7 @@
     --color-body: #f5f5f5;
     --color-content: #d8d8e7;
     --color-orange: #f87103;
+    --color-orange-light: #ffcc00;
     --color-gray-dark: #666;
 }
 body {
@@ -103,7 +104,17 @@ ul.content-box-list li h5:hover,
 }
 /* -------------- Message Container -------------- */
 .container-msg {color: #ffcc00 !important;}
-.container-msg i {margin-right:5px;}
+.message-wrapper {
+    color: var(--color-orange-light) !important;
+    padding-top: 0.4rem !important;
+}
+.message-wrapper i {
+    margin-right: 0.2rem;
+}
+.message-wrapper.mobile i {
+    margin-top: 3px;
+    margin-right: 0.6rem;
+}
 
 /* -------------- INFO TEXT -------------- */
 [data-info-exec] {cursor: help;}
@@ -187,6 +198,9 @@ ul.content-box-list li h5:hover,
 .commit-list li.commit-list-item.active {
     background-color: var(--color-body);
 }
+.commit-list li.commit-list-item.active  .commit-query-data{
+    color: rgb(220, 53, 69);
+}
 .commit-list li.info-text {
     background-color: var(--background-color);
 }
@@ -195,17 +209,21 @@ ul.content-box-list li h5:hover,
 }
 .list-board-item-switch {
     background-color: var(--color-gray-dark);
-    padding: 3px 10px 0 10px;
+    padding: 3px 0 0 0;
     border-right: 1px solid #333;
     margin-right: 1.0rem;
     min-width: 100px;
+}
+
+.list-board-item-switch .form-switch {
+    padding-left: 3.6em !important;
 }
 
 .switcher-auto-commit {
     padding:0.7rem 0.9rem 0.3rem 2.9rem;
     border-right: 1px solid #333;
 }
-.commit-list li.commit-list-btn-wrapper .commit-query-data,
+
 .switcher-auto-commit label {
     color: #e5e5e5;
 }
@@ -251,8 +269,17 @@ ul.content-box-list li h5:hover,
     opacity: 0.5;
 }
 
-.commit-ctrl-mobile {
+.commit-ctrl-mobile-wrapper {
     display: none;
+}
+.commit-ctrl-mobile-wrapper .message-wrapper{
+    background-color: var(--background-color);
+    padding: 0.2rem 0;
+    text-align: center;
+ }
+.commit-ctrl-mobile {
+    display: flex;
+    justify-content: center;
     width: calc(100%);
     margin: 0 auto;
     background-color: var(--color-gray-dark);
@@ -281,9 +308,8 @@ ul.content-box-list li h5:hover,
 
 @media (max-width: 480px) {
     .commit-ctrl-wrapper {display: none !important;}
-    .commit-ctrl-mobile {
-        display: flex;
-        justify-content: center;
+    .commit-ctrl-mobile-wrapper {
+        display: block;
     }
 }
 

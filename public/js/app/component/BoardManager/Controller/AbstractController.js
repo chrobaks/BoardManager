@@ -19,7 +19,7 @@ export default class AbstractController {
             this.idService = idService;
             this.uiState = uiState;
             this.dataType = dataType;
-            this.boardService = new BoardService({store, view, eventBus, uiState, dataType});
+            this.service = new BoardService({store, view, eventBus, idService, uiState, dataType});
             this.error = [];
         } catch (e) {
             console.error('ERROR:AbstractController:initListHeightAndEnableScroll', e);
@@ -88,6 +88,22 @@ export default class AbstractController {
         }
     }
 
+    showMessage(payload) {
+        this.view.showMessage(payload);
+    }
+
+    messageShow(payload) {
+        this.view.showMessage(payload);
+    }
+
+    setMessage(message, action = 'show') {
+        try {
+            this.events.emit(`${this.dataType}:message:${action}`, message);
+        } catch (e) {
+            console.error('ERROR:AbstractController:setMessage', e);
+        }
+    }
+
     setUIState(uiState) {
         this.uiState = uiState;
     }
@@ -118,55 +134,41 @@ export default class AbstractController {
 
     add(data) {
         try {
-            data.id = this.idService.next();
-            this.store.add(data);
-            this.view.render(this.store.all());
-            this.view.renderBoardItemsCount();
-            this.view.applyScrollLimitIfNeeded();
-            this.view.scrollIntoView();
-
-            this.events.emit('commit:add', {
-                action: 'add',
-                type: this.dataType,
-                payload: data
-            });
+            if (this.service.addData(data)) {
+                this.setMessage({text: `Add new data succeed.`, type: 'success'});
+                this.events.emit('commit:add', {
+                    action: 'add',
+                    type: this.dataType,
+                    payload: data
+                });
+            } else {
+                this.setMessage({text: `Add new data failed.`, type: 'warning'});
+            }
         } catch (e) {
             console.error('ERROR:AbstractController:add', e);
-        }
-    }
-    revertAdd(data) {
-        if (data?.payload && data.payload?.id && this.store.remove(data.payload.id)) {
-            this.events.emit('commit:reverted', data.index + 1);
-        } else {
-            console.error('ERROR:AbstractController:revertAd', data);
         }
     }
 
     update(data) {
         try {
-            const {payload, cache} = this.boardService.getCommitArguments(data);
+            const {payload, cache} = this.service.getCommitArguments(data);
             if (!payload || !cache) {
                 console.error('ERROR:AbstractController:update getCommitArguments');
                 return;
             }
-            if  (this.boardService.updateByDataType(data)) {
+            if (this.service.updateByDataType(data)) {
+                this.setMessage({ text: `Update data succeed.`, type: 'success' });
                 this.events.emit('commit:add', {
                     action: 'update',
                     type: this.dataType,
                     payload: payload,
                     cache
                 });
+            } else {
+                this.setMessage({ text: `Update data failed.`, type: 'warning' });
             }
         } catch (e) {
             console.error('ERROR:AbstractController:update', e);
-        }
-    }
-
-    revertUpdate(data) {
-        if (data?.cache && this.store.update(data.cache)) {
-            this.events.emit('commit:reverted', data.index + 1);
-        } else {
-            console.error('ERROR:AbstractController:revertUpdate', data);
         }
     }
 
@@ -192,11 +194,32 @@ export default class AbstractController {
         }
     }
 
-    revert(data) {
+    revertUpdate(data) {
+        if (data?.cache && this.store.update(data.cache)) {
+            this.setMessage({ text: `Update commit successfully reverted`, type: 'success' });
+            this.events.emit('commit:reverted', data.index + 1);
+        } else {
+            console.error('ERROR:AbstractController:revertUpdate', data);
+            this.setMessage({text: `Revert update commit failed.`, type: 'warning'});
+        }
+    }
+
+    revertAdd(data) {
+        if (data?.payload && data.payload?.id && this.store.remove(data.payload.id)) {
+            this.setMessage({ text: `Add commit successfully reverted`, type: 'success' });
+            this.events.emit('commit:reverted', data.index + 1);
+        } else {
+            console.error('ERROR:AbstractController:revertAd', data);
+            this.setMessage({text: `Revert add commit failed.`, type: 'warning'});
+        }
+    }
+
+    revertDelete(data) {
         try {
             const payload = this.store.normalize(data.cache);
             if (payload && payload.id) {
                 this.store.addById(payload);
+                this.setMessage({ text: `Delete commit successfully reverted`, type: 'success' });
                 this.events.emit('commit:reverted', data.index + 1);
             }
         } catch (e) {
@@ -211,17 +234,18 @@ export default class AbstractController {
             let setCommit = false;
 
             if (this.dataType === 'category') {
-                this.boardService.removeCategory(id);
+                this.service.removeCategory(id);
                 setCommit = true;
             }
 
             if (this.dataType === 'item') {
-                this.boardService.removeItem(id);
+                this.service.removeItem(id);
                 if (!this.uiState.isCategoryView()) {
                     setCommit = true;
                 }
             }
             this.view.renderBoardItemsCount();
+            this.setMessage({ text: `Delete data succeed.`, type: 'success' });
             if (setCommit) {
                 this.events.emit('commit:add', {
                     action: 'delete',

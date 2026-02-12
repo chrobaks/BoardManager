@@ -14,27 +14,27 @@
     <div class="container">
         <div data-component="BoardManager">
             <div class="row">
-                <div class="col mt-5">
+                <div class="col mt-5 mb-5">
                     <h1>BoardManager / PackageBoard</h1>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-12 mt-3 container-msg">
-                    <i class="fa fa-info-circle" aria-hidden="true"></i>
-                    <span class="component-msg">Configuration PackageBoard</span>
                 </div>
             </div>
             <div class="row mt-3">
                 <div class="col-12 commit-wrapper">
-                    <div class="commit-ctrl-mobile">
-                        <div class="commit-ctrl-mobile-item">
-                            <input class="form-check-input switchAutoCommit" type="checkbox" data-event="commit:autoCommitSwitch"> auto commit
+                    <div class="commit-ctrl-mobile-wrapper">
+                        <div class="commit-ctrl-mobile">
+                            <div class="commit-ctrl-mobile-item">
+                                <input class="form-check-input switchAutoCommit" type="checkbox" data-event="commit:autoCommitSwitch"> auto commit
+                            </div>
+                            <div class="commit-ctrl-mobile-item btn-commit-ctrl" disabled aria-disabled="true" data-event="commit:submit">
+                                Save commit
+                            </div>
+                            <div class="commit-ctrl-mobile-item btn-commit-ctrl" disabled aria-disabled="true" data-event="commit:show:list">
+                                Show commit
+                            </div>
                         </div>
-                        <div class="commit-ctrl-mobile-item btn-commit-ctrl" disabled aria-disabled="true" data-event="commit:submit">
-                            Save commit
-                        </div>
-                        <div class="commit-ctrl-mobile-item btn-commit-ctrl" disabled aria-disabled="true" data-event="commit:show:list">
-                            Show commit
+                        <div class="message-wrapper mobile small d-flex justify-content-start ps-2 pt-1 pb-1">
+                            <i class="fa fa-info-circle" aria-hidden="true"></i>
+                            <span class="board-message mobile"></span>
                         </div>
                     </div>
                     <div class="commit-ctrl-wrapper d-flex justify-content-start">
@@ -54,11 +54,14 @@
                                         <label class="form-check-label" for="selectAllCommitItems">All</label>
                                     </div>
                                 </div>
-                                <div class="commit-query-data container-msg">Number of commits: <span data-item-key="commitLength">0</span></div>
+                                <div class="commit-query-data small container-msg">Number of commits: <span data-item-key="commitLength">0</span></div>
                             </li>
                             <li class="commit-list-btn-wrapper d-flex justify-content-start info-text">
-                                <button class="commit-list-btn" data-event="commit:undo:exec">Undo</button>
-                                <div class="commit-query-data">When a selection is made, all fields below the selection are automatically selected as well!</div>
+                                <button class="commit-list-btn" data-event="commit:undo:exec"><i class="fa fa-undo-alt me-2" aria-hidden="true"></i>Undo</button>
+                                <div class="message-wrapper small commit-query-data d-flex justify-content-start">
+                                    <i class="fa fa-info-circle d-none d-md-block" aria-hidden="true"></i>
+                                    <span class="board-message"></span>
+                                </div>
                             </li>
                         </ul>
                     </div>
@@ -73,12 +76,24 @@
                 <div class="col-12 col-lg-6 itemboard-wrapper">
                     <button class="btn btn-primary btn-fa btn-sm mb-3" data-event="category:modal:form"><i class="fa fa-file-import" aria-hidden="true"></i>Create new package</button>
                     <ul class="content-box-list category"></ul>
-                    <div class="text-end small container-msg me-1">Number of packages: <span data-item-key="itemBoardLength"></span></div>
+                    <div class="d-flex justify-content-between message-wrapper small">
+                        <div>
+                            <i class="fa fa-info-circle" aria-hidden="true"></i>
+                            <span class="board-message"></span>
+                        </div>
+                        <div class="text-end">Packages: <span data-item-key="itemBoardLength"></span></div>
+                    </div>
                 </div>
                 <div class="col-12 col-lg-6 mt-3 mt-md-0 mb-5 mb-md-0 itemboard-wrapper">
                     <button class="btn btn-primary btn-fa btn-sm mb-3" data-event="item:modal:form"><i class="fa fa-file-import" aria-hidden="true"></i>Create a new bundle</button>
                     <ul class="content-box-list items product"></ul>
-                    <div class="text-end small container-msg me-1">Number of bundles: <span data-item-key="itemBoardLength"></span></div>
+                    <div class="d-flex justify-content-between message-wrapper small">
+                        <div>
+                            <i class="fa fa-info-circle" aria-hidden="true"></i>
+                            <span class="board-message"></span>
+                        </div>
+                        <div class="text-end">Bundles: <span data-item-key="itemBoardLength"></span></div>
+                    </div>
                 </div>
                 <script type="application/json" src="public/js/app/data/itemBoard.json" data-source="BoardManager"></script>
                 <template data-template="categoryTemplate" data-source="BoardManager">
@@ -112,6 +127,7 @@
                         <div class="box-item-content">
                             <h5 class="box-item-icon show" data-event="item:show"><span data-item-key="name"></span></h5><div class="box-item-info">
                                 <table><tbody>
+                                    <tr><td><b>Version:</b></td><td><span data-item-key="version"></span></td></tr>
                                     <tr><td><b>Description:</b></td><td><span data-item-key="description"></span></td></tr>
                                     </tbody></table>
                             </div>

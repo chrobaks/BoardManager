@@ -24,4 +24,18 @@ export default class CommitService {
             console.error('ERROR:CommitService:updateCommits', error);
         }
     }
+
+    updateListBoard(commit) {
+        try {
+            this.store.add(commit);
+            this.view.showCommitCtrl(this.store.hasChanges());
+            this.view.renderCommitList(this.store.all());
+            this.view.showListBoard(true);
+        } catch (error) {
+            console.error('ERROR:CommitService:updateListBoard', error);
+            return false;
+        }
+
+        return this.store.hasChanges();
+    }
 }

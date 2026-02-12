@@ -1,12 +1,13 @@
-export default class CommitView {
+import AbstractView from "./AbstractView.js";
+
+export default class CommitView extends AbstractView {
     /**
      *
      * @param container
      * @param templateService
      */
     constructor(container, templateService) {
-        this.container = container;
-        this.templateService = templateService;
+        super(container, null, templateService);
     }
 
     init () {
@@ -40,7 +41,7 @@ export default class CommitView {
 
     showBoard (board, show, selector = 'd-none') {
         if (!board) return;
-        if (!show) {
+        if (!show && !board.classList.contains(selector)) {
             board.classList.add(selector);
         } else if (show && board.classList.contains(selector)) {
             board.classList.remove(selector);

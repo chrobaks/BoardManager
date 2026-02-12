@@ -6,14 +6,16 @@ export default class ItemController extends AbstractController {
 
         this.init([
             {action:'add'},
-            {action:'revert:add'},
             {action:'remove'},
             {action:'reset'},
-            {action:'revert'},
             {action:'update'},
+            {action:'revert:add'},
             {action:'revert:update'},
-            {action:'show:catItems', callback :  catItems => this.showCatItems(catItems)},
+            {action:'revert:delete'},
+            {action:'show:cat:items'},
+            {action:'message:show'},
         ]);
+        this.setMessage({ text: `Bundle board loaded`, type: 'info' });
     }
 
     show(data) {

@@ -1,12 +1,19 @@
+import AbstractView from "./AbstractView.js";
 import BoardViewFactory from '../Factory/BoardViewFactory.js';
 
-export default class BoardView {
+export default class BoardView extends AbstractView {
     constructor(wrapper, templateService, templateId) {
-        this.container = wrapper.closest('div.itemboard-wrapper');
-        this.wrapper = wrapper;
-        this.templateService = templateService;
-        this.templateId = templateId;
-        this.factory = new BoardViewFactory(this.templateService);
+        try {
+            super(wrapper.closest('div.itemboard-wrapper'), wrapper, templateService);
+            this.templateId = templateId;
+            this.factory = new BoardViewFactory(this.templateService);
+        } catch (e) {
+            console.error('ERROR:BoardView:constructor', e);
+        }
+    }
+
+    firstCharUpperCase(str, formateToLowerCase = true) {
+        return this.factory.firstCharUpperCase(str, formateToLowerCase);
     }
 
     render(collection) {

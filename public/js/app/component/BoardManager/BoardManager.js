@@ -12,7 +12,6 @@ import CommitState from './State/CommitState.js';
 // View
 import BoardView from './View/BoardView.js';
 import CommitView from './View/CommitView.js';
-import MessageView from './View/MessageView.js';
 
 // Controller
 import CategoryController from './Controller/CategoryController.js';
@@ -29,6 +28,8 @@ export const BOARD_EVENT_ACTIONS = {
     EDIT: 'edit',
     DELETE: 'delete'
 };
+
+export const SUPPORTED_EVENTS = ['click', 'input', 'change', 'submit', 'mouseover', 'mouseleave', 'keyup'];
 
 export default class BoardManager {
 
@@ -112,10 +113,6 @@ export default class BoardManager {
             this.container.querySelector('.commit-wrapper'),
             this.templateService,
         );
-
-        this.messageView = new MessageView(
-            this.container.querySelector('.component-msg')
-        );
     }
 
     /* -------------------- */
@@ -159,9 +156,5 @@ export default class BoardManager {
 
         this.modalController.init();
         this.commitController.init();
-
-        this.eventBus.on('message:show', (payload) => {
-            this.messageView.show(payload.text, payload.type);
-        });
     }
 }

@@ -18,7 +18,7 @@ export default class CommitController {
         this.events = eventBus;
         this.dataType = 'commit';
         this.factory = new CommitFactory({
-            'delete': 'revert',
+            'delete': 'revert:delete',
             'deleteItemFromAll': 'revert:item',
             'deleteItemFromCategory': 'revert:item',
             'update': 'revert:update',
@@ -41,6 +41,9 @@ export default class CommitController {
         this.events.on('commit:add', (payload) => this.handleAddCommit(payload));
         this.events.on('commit:remove', () => this.removeCommit());
         this.events.on('commit:reverted', (payload) => this.revertedCommit(payload));
+        this.events.on('commit:message:show', (payload) => this.showMessage(payload));
+
+        this.events.emit('commit:message:show', { text: 'Commit controls loaded', type: 'info' });
     }
 
     removeCommit() {
@@ -63,9 +66,13 @@ export default class CommitController {
                 );
             }
         } else {
+            this.service.updateCommits();
             this.events.emit('category:reset', {});
             this.events.emit('item:reset', {});
-            this.service.updateCommits();
+            this.events.emit(this.dataType + ':message:show', {
+                text: `Reverted all selected changes.`,
+                type: 'success'
+            });
         }
     }
 
@@ -82,6 +89,10 @@ export default class CommitController {
     commitUndoAll (payload) {
         this.view.changeUndoCommitSwitch(payload.targetElement.checked);
         this.view.renderActiveCommitItem();
+    }
+
+    showMessage(payload) {
+        this.view.showMessage(payload);
     }
 
     showListCommits () {
@@ -111,12 +122,15 @@ export default class CommitController {
     handleAddCommit(commit) {
         console.log('handleAddCommit:', commit);
         this.view.showAlertBoard(false);
-        this.view.showListBoard(false);
         if (!this.view.autoCommitSwitchIsChecked()) {
-            this.store.add(commit);
-            this.view.showCommitCtrl(this.store.hasChanges());
-            this.events.emit('message:show', { text: 'New commit successfully created', type: 'success' });
+            if (this.service.updateListBoard(commit)) {
+                this.events.emit(this.dataType + ':message:show', {
+                    text: `New ${commit.action} commit successfully created`,
+                    type: 'success'
+                });
+            }
         } else {
+            this.view.showListBoard(false);
             this.submitSingleCommit(commit);
         }
     }
@@ -136,7 +150,7 @@ export default class CommitController {
             this.events.emit('message:show', { text: 'Commit successfully submitted', type: 'success' });
         } catch (error) {
             console.error('Failed to submit commits', error);
-            this.events.emit('message:show', { text: 'Error saving commits', type: 'danger' });
+            // this.events.emit('message:show', { text: 'Error saving commits', type: 'danger' });
         }
     }
 
@@ -150,10 +164,10 @@ export default class CommitController {
             });
         } catch (error) {
             console.error('Auto-commit failed', error);
-            this.events.emit('message:show', {
-                text: 'Automatic saving failed',
-                type: 'danger'
-            });
+            // this.events.emit('message:show', {
+            //     text: 'Automatic saving failed',
+            //     type: 'danger'
+            // });
         }
     }
 }

@@ -6,15 +6,17 @@ export default class CategoryController extends AbstractController {
 
         this.init([
             {action:'add'},
-            {action:'revert:add'},
             {action:'remove'},
             {action:'reset'},
-            {action:'revert'},
             {action:'update'},
+            {action:'revert:add'},
             {action:'revert:update'},
-            {action:'delete:item', callback :  payload => this.deleteItem(payload)},
-            {action:'revert:item', callback :  (payload) => this.revertItem(payload)},
+            {action:'revert:delete'},
+            {action:'delete:item'},
+            {action:'revert:item'},
+            {action:'message:show'},
         ]);
+        this.setMessage({ text: `Package board loaded`, type: 'info' });
     }
 
     revertItem(data) {
@@ -51,7 +53,7 @@ export default class CategoryController extends AbstractController {
                     this.uiState.showBoard(this.dataType);
                     this.view.displayItemKeyBox('itemBoardLength', true);
                 }
-                this.events.emit('item:show:catItems', catItems);
+                this.events.emit('item:show:cat:items', catItems);
             }
         } catch (error) {
             console.error('ERROR:CategoryController:sho', error);
@@ -85,9 +87,9 @@ export default class CategoryController extends AbstractController {
             if (this.uiState.isBoardView(this.dataType)) {
                 cache = this.store.removeItemFromAll(data.id);
             } else {
-                const cat = this.store.getById(Number(this.uiState.getActiveId(this.dataType)));
-                this.store.removeItem(cat, data.id);
-                this.events.emit('item:show:catItems', cat.items);
+                const cat = this.service.deleteItemFromCategory(data);
+                if (!cat) return;
+                this.events.emit('item:show:cat:items', cat.items);
                 emitAction = 'deleteItemFromCategory';
                 cache = [cat.id];
             }
