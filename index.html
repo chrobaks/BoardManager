@@ -19,16 +19,16 @@
                 </div>
             </div>
             <div class="row mt-3">
-                <div class="col-12 commit-wrapper">
+                <div class="col-12 commit-wrapper" data-fetch-url="/api/commits">
                     <div class="commit-ctrl-mobile-wrapper">
                         <div class="commit-ctrl-mobile">
                             <div class="commit-ctrl-mobile-item">
-                                <input class="form-check-input switchAutoCommit" type="checkbox" data-event="commit:autoCommitSwitch"> auto commit
+                                <input class="form-check-input switchAutoCommit mobile" type="checkbox" data-event="commit:auto:commit"> auto commit
                             </div>
-                            <div class="commit-ctrl-mobile-item btn-commit-ctrl" disabled aria-disabled="true" data-event="commit:submit">
+                            <div class="commit-ctrl-mobile-item btn-commit-ctrl" disabled aria-disabled="true" data-event="commit:submit:commits">
                                 Save commit
                             </div>
-                            <div class="commit-ctrl-mobile-item btn-commit-ctrl" disabled aria-disabled="true" data-event="commit:show:list">
+                            <div class="commit-ctrl-mobile-item btn-commit-ctrl" disabled aria-disabled="true" data-event="commit:show:commits">
                                 Show commit
                             </div>
                         </div>
@@ -39,11 +39,11 @@
                     </div>
                     <div class="commit-ctrl-wrapper d-flex justify-content-start">
                         <div class="form-check form-switch switcher-auto-commit">
-                            <input class="form-check-input switchAutoCommit" type="checkbox" role="switch" id="switchAutoCommit" data-event="commit:autoCommitSwitch">
+                            <input class="form-check-input switchAutoCommit desktop" type="checkbox" role="switch" id="switchAutoCommit" data-event="commit:auto:commit">
                             <label class="form-check-label" for="switchAutoCommit">Enable auto commit</label>
                         </div>
-                        <button class="btn-commit-ctrl" type="button" data-event="commit:submit" disabled aria-disabled="true"><i class="fa fa-file-import me-2" aria-hidden="true"></i>Save Commit(s)</button>
-                        <button class="btn-commit-ctrl" type="button" data-event="commit:show:list" disabled aria-disabled="true"><i class="fa fa-info me-2" aria-hidden="true"></i>Show Commit(s)</button>
+                        <button class="btn-commit-ctrl" type="button" data-event="commit:submit:commits" disabled aria-disabled="true"><i class="fa fa-file-import me-2" aria-hidden="true"></i>Save Commit(s)</button>
+                        <button class="btn-commit-ctrl" type="button" data-event="commit:show:commits" disabled aria-disabled="true"><i class="fa fa-info me-2" aria-hidden="true"></i>Show Commit(s)</button>
                     </div>
                     <div class="commit-board commit-list-board d-none mt-1">
                         <ul class="commit-list">
@@ -57,7 +57,7 @@
                                 <div class="commit-query-data small container-msg">Number of commits: <span data-item-key="commitLength">0</span></div>
                             </li>
                             <li class="commit-list-btn-wrapper d-flex justify-content-start info-text">
-                                <button class="commit-list-btn" data-event="commit:undo:exec"><i class="fa fa-undo-alt me-2" aria-hidden="true"></i>Undo</button>
+                                <button class="commit-list-btn" data-event="commit:exec:undo"><i class="fa fa-undo-alt me-2" aria-hidden="true"></i>Undo</button>
                                 <div class="message-wrapper small commit-query-data d-flex justify-content-start">
                                     <i class="fa fa-info-circle d-none d-md-block" aria-hidden="true"></i>
                                     <span class="board-message"></span>

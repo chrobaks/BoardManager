@@ -1,6 +1,6 @@
-import AbstractController from './AbstractController.js';
+import BoardController from './BoardController.js';
 
-export default class CategoryController extends AbstractController {
+export default class CategoryController extends BoardController {
     constructor(store, view, eventBus, idService, uiState) {
         super(store, view, eventBus, idService, uiState, 'category');
 
@@ -23,11 +23,11 @@ export default class CategoryController extends AbstractController {
         try {
             const itemId = data?.payload?.itemId ?? null;
 
-            if (itemId && data?.cache) {
-                if (this.store.reinsertItem(data.cache, itemId)) {
-                    this.events.emit('commit:reverted', data.index + 1);
-                }
-            }
+            if (!itemId || !data?.payload?.itemId) return;
+
+            this.store.reinsertItem(data.cache, itemId);
+            this.events.emit('commit:reverted', data.index + 1);
+
         } catch (error) {
             console.error('ERROR:CategoryController:revertItem', error);
         }

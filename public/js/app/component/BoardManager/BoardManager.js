@@ -23,10 +23,17 @@ import CommitController from './Controller/CommitController.js';
 import FormFactory from './Factory/FormFactory.js';
 
 export const BOARD_EVENT_ACTIONS = {
-    SHOW: 'show',
-    FORM: 'modal:form',
-    EDIT: 'edit',
-    DELETE: 'delete'
+    'board': {
+        SHOW: 'show',
+        FORM: 'modal:form',
+        EDIT: 'edit',
+        DELETE: 'delete'
+    },
+    'commit': {
+        SHOW_COMMITS: 'show:commits',
+        EXEC_UNDO: 'exec:undo',
+        SUBMIT_COMMITS: 'submit:commits',
+    }
 };
 
 export const SUPPORTED_EVENTS = ['click', 'input', 'change', 'submit', 'mouseover', 'mouseleave', 'keyup'];

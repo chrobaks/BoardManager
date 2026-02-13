@@ -1,6 +1,6 @@
-import AbstractController from './AbstractController.js';
+import BoardController from './BoardController.js';
 
-export default class ItemController extends AbstractController {
+export default class ItemController extends BoardController {
     constructor(store, view, eventBus, idService, uiState) {
         super(store, view, eventBus, idService, uiState, 'item');
 

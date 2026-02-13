@@ -108,8 +108,15 @@ ul.content-box-list li h5:hover,
     color: var(--color-orange-light) !important;
     padding-top: 0.4rem !important;
 }
-.message-wrapper i {
-    margin-right: 0.2rem;
+ .message-wrapper i {
+     margin-right: 0.2rem;
+ }
+.message-wrapper.commit-query-data i {
+    line-height: 1.2rem;
+    margin-right: 0.4rem;
+}
+.message-wrapper.commit-query-data {
+    padding-top: 0.3rem !important;
 }
 .message-wrapper.mobile i {
     margin-top: 3px;

@@ -9,24 +9,25 @@ export default class CategoryStore extends AbstractStore {
      *
      * @param catIdList
      * @param itemId
-     * @returns {boolean}
+     * @returns {void}
+     * @throws Error if category isn't found or update failed.
      */
     reinsertItem(catIdList, itemId) {
         try{
-            catIdList.forEach((catId) => {
+            for (const catId of catIdList) {
                 const cat = this.getById(catId);
-                if (cat) {
-                    cat.items.push(itemId)
-                    cat.items = this.sortCatItemsAsc(cat.items);
-                    this.update(cat);
+                if (!cat) {
+                    throw new Error(`ERROR:CategoryStore:reinsertItem category not found.`);
                 }
-            });
-            return true;
+
+                cat.items.push(itemId)
+                cat.items = this.sortCatItemsAsc(cat.items);
+                this.update(cat);
+            }
         } catch (e) {
             console.error('ERROR:CategoryStore:reinsertItem',e);
+            throw e;
         }
-
-        return false;
     }
 
     removeItemFromAll(itemId) {

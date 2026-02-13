@@ -48,6 +48,12 @@ export default class DomEventManager {
         }
     }
 
+    destroy() {
+        this.supportedEvents.forEach(eventType => {
+            this.root.removeEventListener(eventType, (event) => this.handleEvent(event));
+        });
+    }
+
     addDesktopHoverEvents() {
         const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 

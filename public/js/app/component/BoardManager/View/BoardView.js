@@ -46,6 +46,7 @@ export default class BoardView extends AbstractView {
             }
         } catch (e) {
             console.error('ERROR:BoardView:renderNodeData', e);
+            throw e;
         }
     }
 

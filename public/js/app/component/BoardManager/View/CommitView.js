@@ -14,7 +14,13 @@ export default class CommitView extends AbstractView {
         this.listBoard = this.container.querySelector('.commit-list-board');
         this.btnCommitCtrl = this.container.querySelectorAll('.btn-commit-ctrl');
         this.alertBoard = this.container.querySelector('.commit-alert-board');
-        this.autoCommitSwitch = this.container.querySelector('.switchAutoCommit');
+
+        this.initAutoCommitSwitch();
+    }
+
+    initAutoCommitSwitch () {
+        const selector = this.isMobile() ? '.switchAutoCommit.mobile' : '.switchAutoCommit.desktop';
+        this.autoCommitSwitch = this.container.querySelector(selector);
     }
 
     showCommitCtrl(hasChanges) {
@@ -157,6 +163,10 @@ export default class CommitView extends AbstractView {
         } catch (e) {
             console.error('ERROR:CommitView:renderCommitList', e);
         }
+    }
+
+    getWrapperDataValue (id) {
+        return this.container.dataset?.[id] ?? '';
     }
 
     getCommitItemList () {

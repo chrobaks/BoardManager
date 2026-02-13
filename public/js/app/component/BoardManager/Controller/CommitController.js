@@ -1,113 +1,97 @@
 
+import AbstractController from './AbstractController.js';
 import CommitFactory from '../Factory/CommitFactory.js';
 import CommitService from '../Service/CommitService.js';
 
-export default class CommitController {
+export default class CommitController extends AbstractController {
     /**
      * @param {CommitStore} store
-     * @param commitView
+     * @param {CommitView} view
      * @param {CommitState} commitState
      * @param {HTMLElement} container
      * @param {EventBus} eventBus
      */
-    constructor(store, commitView, commitState, container, eventBus) {
-        this.store = store;
-        this.view = commitView;
+    constructor(store, view, commitState, container, eventBus) {
+        super(store, view, eventBus, null, null, 'commit');
         this.commitState = commitState;
         this.container = container;
-        this.events = eventBus;
-        this.dataType = 'commit';
-        this.factory = new CommitFactory({
-            'delete': 'revert:delete',
-            'deleteItemFromAll': 'revert:item',
-            'deleteItemFromCategory': 'revert:item',
-            'update': 'revert:update',
-            'add': 'revert:add',
-        });
-        this.service = new CommitService(this.store, this.view);
+        this.service = new CommitService(
+            this.store,
+            this.view,
+            this.events,
+            new CommitFactory({
+                'delete': 'revert:delete',
+                'deleteItemFromAll': 'revert:item',
+                'deleteItemFromCategory': 'revert:item',
+                'update': 'revert:update',
+                'add': 'revert:add',
+                'reset': 'reset',
+            })
+        );
     }
 
     init() {
         this.view.init();
         this.commitState.setAutoEnabled(this.view.autoCommitSwitchIsChecked());
         this.view.showCommitCtrl(false);
-
-        this.events.on('click:commit:submit', () => this.submitCommits());
-        this.events.on('click:commit:show:list', () => this.showListCommits());
-        this.events.on('click:commit:undo:exec', () => this.execCommitUndo());
-        this.events.on('change:commit:autoCommitSwitch', (payload) => this.changeAutoCommitSwitch(payload));
-        this.events.on('change:commit:undo', () => this.commitUndo());
-        this.events.on('change:commit:undo:all', (payload) => this.commitUndoAll(payload));
-        this.events.on('commit:add', (payload) => this.handleAddCommit(payload));
-        this.events.on('commit:remove', () => this.removeCommit());
-        this.events.on('commit:reverted', (payload) => this.revertedCommit(payload));
-        this.events.on('commit:message:show', (payload) => this.showMessage(payload));
-
-        this.events.emit('commit:message:show', { text: 'Commit controls loaded', type: 'info' });
+        this.initEvents([
+            {action:'auto:commit', eventName: 'change'},
+            {action:'undo', eventName: 'change'},
+            {action:'undo:all', eventName: 'change'},
+            {action:'add'},
+            {action:'remove'},
+            {action:'reverted'},
+            {action:'message:show'},
+        ]);
+        if (this.view.isMobile()) {
+            this.setMessage({text: `Commit controls loaded`, type: 'info'});
+        }
     }
 
-    removeCommit() {
+    remove() {
         const undoIndexList = this.view.getUndoCommitList();
 
         if (undoIndexList.length === 0) return;
 
         if (this.store.setRevertList(undoIndexList)) {
-           this.revertedCommit(0);
+           this.reverted(0);
         }
     }
 
-    revertedCommit(index) {
+    reverted(index) {
         if (index < this.store.revertList.length) {
-            const commit = this.store.getRevertByIndex(index);
-            if (commit && commit.type) {
-                this.events.emit(
-                    this.factory.getEventAction(commit),
-                    {index: index, cache: commit.cache, payload: commit.payload}
-                );
-            }
+            this.service.handleCommitRevert(index);
         } else {
-            this.service.updateCommits();
-            this.events.emit('category:reset', {});
-            this.events.emit('item:reset', {});
-            this.events.emit(this.dataType + ':message:show', {
-                text: `Reverted all selected changes.`,
-                type: 'success'
-            });
+            this.service.handleRevertFinished();
+            this.setMessage({text: `Reverted all selected changes.`, type: 'success'});
         }
     }
 
-    execCommitUndo () {
+    execUndo () {
         this.events.emit('modal:prompt:delete', {
             type: this.dataType,
             payload: {},
             msg:'Warning!!! All marked commits will be reverted. This will also change the current data! Do you want to continue?'
         });
     }
-    commitUndo () {
+
+    undo () {
         this.view.renderActiveCommitItem();
     }
-    commitUndoAll (payload) {
+    undoAll (payload) {
         this.view.changeUndoCommitSwitch(payload.targetElement.checked);
         this.view.renderActiveCommitItem();
     }
 
-    showMessage(payload) {
+    messageShow(payload) {
         this.view.showMessage(payload);
     }
 
-    showListCommits () {
-        const commitList = this.store.all();
-        const show = this.view.listBoard.classList.contains('d-none');
-
-        this.view.showAlertBoard(false);
-        if (commitList.length && this.view.listBoard.classList.contains('d-none')) {
-            this.view.renderCommitList(commitList);
-        }
-        this.view.changeDeleteAllSwitchCheck(false);
-        this.view.showListBoard(show);
+    showCommits () {
+        this.service.displayCommitList();
     }
 
-    changeAutoCommitSwitch(payload) {
+    autoCommit(payload) {
         this.view.showAlertBoard(false);
         if (!this.commitState.autoIsEnabled() && this.store.length() > 0) {
             payload.targetElement.checked = false;
@@ -115,59 +99,53 @@ export default class CommitController {
             globalThis.setTimeout(() => this.view.showAlertBoard(false), 5000);
         } else {
             this.commitState.toggleAutoEnabled();
-            this.view.showCommitCtrl(this.store.hasChanges());
+            this.view.showCommitCtrl(this.store.hasCommits());
         }
     }
 
-    handleAddCommit(commit) {
-        console.log('handleAddCommit:', commit);
+    add(payload) {
         this.view.showAlertBoard(false);
-        if (!this.view.autoCommitSwitchIsChecked()) {
-            if (this.service.updateListBoard(commit)) {
-                this.events.emit(this.dataType + ':message:show', {
-                    text: `New ${commit.action} commit successfully created`,
-                    type: 'success'
-                });
-            }
-        } else {
+
+        if (this.view.autoCommitSwitchIsChecked()) {
             this.view.showListBoard(false);
-            this.submitSingleCommit(commit);
+            this.submitPayload(payload);
+            return;
         }
+        if (!this.service.updateListBoard(payload)) return;
+
+        this.setMessage({text: `New ${payload.action} commit successfully created`, type: 'success'});
     }
 
     async submitCommits() {
         const commits = this.store.all();
-        console.log('submitCommits:', commits);
-        this.view.showAlertBoard(false);
-        this.view.showListBoard(false);
-
         if (commits.length === 0) return;
+
         try {
-            // await fetch('/api/commit', { method: 'POST', body: JSON.stringify(commits) });
-            
-            this.store.clear();
-            this.view.showCommitCtrl(this.store.hasChanges());
-            this.events.emit('message:show', { text: 'Commit successfully submitted', type: 'success' });
+            await this.service.execSubmit(commits);
+            this.service.updateCommitBoard();
+            this.setMessage({text: `Request successfully submitted!`, type: 'success'});
+
         } catch (error) {
-            console.error('Failed to submit commits', error);
-            // this.events.emit('message:show', { text: 'Error saving commits', type: 'danger' });
+            console.error('ERROR:CommitController:submitCommits', error);
+            this.setMessage({text: `Commit Request failed!`, type: 'danger'});
         }
     }
 
-    async submitSingleCommit(payload) {
+    async submitPayload(payload) {
+        const dataType = payload?.type ?? null;
         try {
-            // await fetch('/api/commit', { method: 'POST', body: JSON.stringify([payload]) });
+            if (!dataType) {
+                throw new Error(`Error: dataType is not set. Please set it in the board settings.`);
+            }
 
-            this.events.emit('message:show', {
-                text: 'Changes saved automatically',
-                type: 'success'
-            });
+            await this.service.execSubmit([payload]);
+            this.setMessage({dataType, text: `Request successfully submitted!`, type: 'success'});
         } catch (error) {
-            console.error('Auto-commit failed', error);
-            // this.events.emit('message:show', {
-            //     text: 'Automatic saving failed',
-            //     type: 'danger'
-            // });
+            console.error('ERROR:CommitController:submitPayload', error);
+            if (dataType) {
+                this.service.handlePayloadRevert(payload);
+                this.setMessage({dataType, text: `Request failed!`, type: 'danger'});
+            }
         }
     }
 }

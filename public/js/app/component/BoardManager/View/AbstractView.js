@@ -1,4 +1,4 @@
-
+import Ui from '../../../core/Ui.js';
 import MessageView from './MessageView.js';
 
 export default class AbstractView {
@@ -22,5 +22,9 @@ export default class AbstractView {
     showMessage(message) {
         if (!this.messageView) return;
         this.messageView.show(message);
+    }
+
+    isMobile() {
+        return Ui.isMobile();
     }
 }

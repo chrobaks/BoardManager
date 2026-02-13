@@ -36,46 +36,38 @@ export default class BoardService {
     }
 
     updateByDataType(data) {
-        let isOk = false;
-        if (!this.store.update(data)) { return isOk; }
         try {
+            this.store.update(data)
             if (this.uiState.isBoardView(this.dataType)) {
                 this.view.render(this.store.all());
-                isOk = true;
             } else {
                 if (this.dataType === 'category') {
-                    isOk = this.updateCategory();
+                    this.updateCategory();
                 } else if (this.dataType === 'item') {
-                    isOk = this.updateItems();
+                    this.updateItems();
                 }
             }
-        } catch(err) {
-            console.error('ERROR:BoardService:constructor', err, data);
-            return false;
+        } catch(e) {
+            console.error('ERROR:BoardService:updateByDataType', e, data);
+            throw e;
         }
-
-        return isOk;
     }
 
     updateCategory() {
         const cat = this.store.getById(this.uiState.getActiveId(this.dataType));
-        if (cat && cat?.items) {
-            this.view.renderNodeData(cat);
-            this.events.emit('item:show:cat:items', cat.items);
-            return true;
+        if (!cat || cat && !cat?.items) {
+            throw new Error(`ERROR:BoardService:updateCategory category not found.`);
         }
-
-        return false;
+        this.view.renderNodeData(cat);
+        this.events.emit('item:show:cat:items', cat.items);
     }
 
     updateItems() {
         const item = this.store.getById(this.uiState.getActiveId(this.dataType));
-        if (item) {
-            this.view.renderNodeData(item);
-            return true;
+        if (!item) {
+            throw new Error(`ERROR:BoardService:updateItems category not found.`);
         }
-
-        return false;
+        this.view.renderNodeData(item);
     }
 
     deleteItemFromCategory(data) {
@@ -121,14 +113,13 @@ export default class BoardService {
     }
 
     getCommitArguments(data) {
-        const args = {payload:null, cache: null};
         const payload = this.store.normalize(data);
-
         const id = payload?.id ?? null;
-        if (!id) { return args; }
+
+        if (!id) {throw new Error(`ERROR:BoardService:getCommitArguments id not found.`);}
 
         const cache = {...this.store.getById(id)};
-        if (!cache) { return args; }
+        if (!cache) { throw new Error(`ERROR:BoardService:getCommitArguments cache not found.`); }
 
         return {payload, cache};
     }

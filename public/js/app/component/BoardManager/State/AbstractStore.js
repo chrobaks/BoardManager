@@ -46,19 +46,14 @@ export default class AbstractStore {
     }
 
     update(update) {
-        try {
-            update = this.factory.normalize(update);
-            const data = this.getById(update.id);
-            if (data) {
-                Object.assign(data, update);
-
-                return true;
-            }
-        } catch (e) {
-            console.error('ERROR:AbstractStore:update', e);
+        update = this.factory.normalize(update);
+        const data = this.getById(update.id);
+        if (!data) {
+            throw new Error(`ERROR:AbstractStore Update failed: Item with id ${update.id} not found.`);
         }
+        Object.assign(data, update);
 
-        return false;
+        return true;
     }
 
     remove(id) {

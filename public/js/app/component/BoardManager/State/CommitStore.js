@@ -4,10 +4,14 @@ export default class CommitStore {
     constructor() {
         this.queue = [];
         this.revertList = [];
+        this.queueChange = false;
     }
 
     add(entry) {
+        const lengthBefore = this.queue.length;
         this.queue.push(entry);
+        this.queueChange =  (lengthBefore < this.queue.length);
+        return this.queueChange;
     }
 
     all() {
@@ -22,8 +26,12 @@ export default class CommitStore {
         this.queue = [];
     }
 
-    hasChanges() {
+    hasCommits() {
         return this.queue.length > 0;
+    }
+
+    hasChanges() {
+        return this.queueChange;
     }
 
     setRevertList(undoIndexList) {
