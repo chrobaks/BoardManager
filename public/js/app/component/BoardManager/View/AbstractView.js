@@ -11,8 +11,8 @@ export default class AbstractView {
     }
 
     initMessageView() {
-        if(this.container.querySelectorAll('.board-message').length) {
-            this.messageView = new MessageView('.board-message');
+        if(this.container.querySelectorAll('[data-bord-message]').length) {
+            this.messageView = new MessageView('data-bord-message');
             this.messageView.init(this.container);
         } else {
             this.messageView = null;

@@ -46,7 +46,7 @@ export default class StoreFactory {
             return result;
         } catch (e) {
             console.error(`ERROR:StoreFactory:Normalization error in ${data}:`, e);
-            return {};
+            throw e;
         }
     }
 }

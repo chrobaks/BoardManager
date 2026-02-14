@@ -7,32 +7,36 @@ export default class CategoryStore extends AbstractStore {
 
     /**
      *
-     * @param catIdList
-     * @param itemId
      * @returns {void}
-     * @throws Error if category isn't found or update failed.
+     * @throws Error
+     * @param data
      */
-    reinsertItem(catIdList, itemId) {
-        try{
-            for (const catId of catIdList) {
-                const cat = this.getById(catId);
-                if (!cat) {
-                    throw new Error(`ERROR:CategoryStore:reinsertItem category not found.`);
-                }
+    reinsertItem(data) {
+        const itemId = data?.payload?.itemId ?? null;
+        const revertData = data?.cache ?? null;
 
-                cat.items.push(itemId)
-                cat.items = this.sortCatItemsAsc(cat.items);
-                this.update(cat);
+        if (itemId === null || revertData === null) {
+            throw new Error(`ERROR:CategoryStore:reinsertItem data invalid. itemId: ${itemId}, revertData: ${revertData}.`);
+        }
+
+        for (const catId of revertData) {
+            const cat = this.getById(catId);
+            if (!cat) {
+                throw new Error(`ERROR:CategoryStore:reinsertItem category not found.`);
             }
-        } catch (e) {
-            console.error('ERROR:CategoryStore:reinsertItem',e);
-            throw e;
+
+            cat.items.push(itemId)
+            cat.items = this.sortCatItemsAsc(cat.items);
+            this.update(cat);
         }
     }
 
     removeItemFromAll(itemId) {
+        if ((itemId ?? null) === null) {
+            throw new Error(`ERROR:CategoryStore:removeItemFromAll itemId id not found.`);
+        }
         const removedIdList = [];
-        if (!itemId) return removedIdList;
+
         this.collection.forEach(cat => {
             if (!Array.isArray(cat.items)) return;
 

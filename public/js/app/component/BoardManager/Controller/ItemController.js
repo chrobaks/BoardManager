@@ -1,8 +1,9 @@
 import BoardController from './BoardController.js';
+import ItemService from '../Service/ItemService.js';
 
 export default class ItemController extends BoardController {
     constructor(store, view, eventBus, idService, uiState) {
-        super(store, view, eventBus, idService, uiState, 'item');
+        super(store, view, eventBus, idService, uiState, 'item', ItemService);
 
         this.init([
             {action:'add'},
@@ -16,20 +17,6 @@ export default class ItemController extends BoardController {
             {action:'message:show'},
         ]);
         this.setMessage({ text: `Bundle board loaded`, type: 'info' });
-    }
-
-    show(data) {
-        const payload = this.store.normalize(data);
-        if (payload?.id && payload.id) {
-            this.view.toggleBoxItem(payload.id);
-            if (this.uiState.isBoardView(this.dataType)) {
-                this.uiState.showItem(payload.id);
-                this.view.displayItemKeyBox('itemBoardLength', false);
-            } else {
-                this.uiState.showBoard(this.dataType);
-                this.view.displayItemKeyBox('itemBoardLength', true);
-            }
-        }
     }
 
     showCatItems(catItems) {

@@ -76,6 +76,7 @@ export default class CommitController extends AbstractController {
     }
 
     undo () {
+        this.view.changeDeleteAllSwitchCheck(false);
         this.view.renderActiveCommitItem();
     }
     undoAll (payload) {

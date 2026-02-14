@@ -8,10 +8,13 @@ export default class MessageView {
     }
 
     init(container) {
-        if (Ui.isMobile() && container.querySelector(this.selector + '.mobile')) {
-            this.container = container.querySelector(this.selector + '.mobile')
+        const selectorDesktop = `[${this.selector}='desktop']`;
+        const selectorMobile = `[${this.selector}='mobile']`;
+
+        if (Ui.isMobile() && container.querySelector(selectorMobile)) {
+            this.container = container.querySelector(selectorMobile);
         } else {
-            this.container = [...container.querySelectorAll(this.selector)].find(el => !el.classList.contains('mobile'));
+            this.container = container.querySelector(selectorDesktop);
         }
         const wrapper = this.container?.parentElement?.closest('div');
         this.icon = wrapper.querySelector('i.fa') ?? null;
@@ -23,12 +26,10 @@ export default class MessageView {
         if (this.icon) {
             this.messageIcon(message.type);
         }
-        // this.container.className = `alert alert-${message.type}`;
     }
 
     clear() {
         this.container.innerText = '';
-        this.container.className = '';
     }
 
     messageIcon(type) {

@@ -21,7 +21,7 @@ export default class AbstractStore {
             const lengthBefore = this.collection.length;
             const collectionItem = this.factory.normalize(obj);
             if (Object.keys(collectionItem).length) {
-                this.collection.push(this.factory.normalize(obj));
+                this.collection.push(collectionItem);
             }
 
             return lengthBefore < this.collection.length;
@@ -33,15 +33,17 @@ export default class AbstractStore {
     }
 
     addById(obj) {
-        try {
-            const index = this.collection.findIndex(item => item.id > obj.id);
-            if (index === -1) {
-                this.collection.push(obj);
-            } else {
-                this.collection.splice(index, 0, obj);
-            }
-        } catch (e) {
-            console.error('ERROR:AbstractStore:addById', e);
+        const payload = this.normalize(obj.cache);
+
+        if (!('id' in payload) || (payload.id ?? null) === null) {
+            throw new Error(`ERROR:AbstractStore:addById payload id not found.`);
+        }
+
+        const index = this.collection.findIndex(item => item.id > payload.id);
+        if (index === -1) {
+            this.collection.push(payload);
+        } else {
+            this.collection.splice(index, 0, payload);
         }
     }
 
@@ -58,7 +60,11 @@ export default class AbstractStore {
 
     remove(id) {
         const collectionLength = this.collection.length;
-        this.collection = this.collection.filter(c => c.id !== id);
+        const index = this.collection.findIndex(c => c.id === id);
+        if (index === -1) {
+            throw new Error(`ERROR:AbstractStore:remove id not found`);
+        }
+        this.collection.splice(index, 1);
 
         return (this.collection.length < collectionLength);
     }

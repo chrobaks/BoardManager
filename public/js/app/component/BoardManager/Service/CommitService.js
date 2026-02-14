@@ -86,6 +86,7 @@ export default class CommitService {
             this.view.showCommitCtrl(this.store.hasCommits());
             this.view.renderCommitList(this.store.all());
             this.view.showListBoard(true);
+            this.view.changeDeleteAllSwitchCheck(false);
         } catch (error) {
             console.error('ERROR:CommitService:updateListBoard', error);
             return false;

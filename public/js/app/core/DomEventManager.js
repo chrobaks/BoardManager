@@ -10,6 +10,7 @@ export default class DomEventManager {
         this.eventBus = eventBus;
         this.defaultEvents = ['click', 'input', 'change', 'submit', 'keyup', 'contextmenu'];
 
+        this.handleEvent = this.handleEvent.bind(this);
         this.init(options);
     }
 
@@ -23,7 +24,7 @@ export default class DomEventManager {
 
             this.addDesktopHoverEvents();
             this.supportedEvents.forEach(eventType => {
-                this.root.addEventListener(eventType, (event) => this.handleEvent(event));
+                this.root.addEventListener(eventType, this.handleEvent);
             });
         } catch (e) {
             console.error('Error:DomEventManager:init', e);
@@ -50,7 +51,7 @@ export default class DomEventManager {
 
     destroy() {
         this.supportedEvents.forEach(eventType => {
-            this.root.removeEventListener(eventType, (event) => this.handleEvent(event));
+            this.root.removeEventListener(eventType, this.handleEvent);
         });
     }
 

@@ -1,20 +1,24 @@
-import BoardService from '../Service/BoardService.js';
 import AbstractController from './AbstractController.js';
 
 export default class BoardController extends AbstractController {
     /**
      *
-     * @param store
-     * @param view
-     * @param eventBus
-     * @param idService
-     * @param uiState
-     * @param dataType
+     * @param {CategoryStore | ItemStore} store
+     * @param {BoardView} view
+     * @param {EventBus} eventBus
+     * @param {IdService} idService
+     * @param {UIState} uiState
+     * @param {string} dataType
+     * @param {typeof CategoryService | typeof ItemService} Service
      */
-    constructor(store, view, eventBus, idService, uiState, dataType) {
+    constructor(store, view, eventBus, idService, uiState, dataType, Service) {
         try {
             super(store, view, eventBus, idService, uiState, dataType);
-            this.service = new BoardService({store, view, eventBus, idService, uiState, dataType});
+            if (typeof Service !== 'function') {
+                throw new Error('Service is not a constructor');
+            }
+
+            this.service = new Service({store, view, eventBus, idService, uiState, dataType});
             this.error = [];
         } catch (e) {
             console.error('ERROR:BoardController:initListHeightAndEnableScroll', e);
@@ -44,6 +48,14 @@ export default class BoardController extends AbstractController {
         this.events.emit('modal:open:form', {type: this.dataType, payload: {id: 0}});
         this.events.emit('category:reset', {});
         this.events.emit('item:reset', {});
+    }
+
+    show(data) {
+        try {
+            this.service.show(data);
+        } catch (error) {
+            console.error('ERROR:BoardController:show', error);
+        }
     }
 
     edit(data) {
@@ -105,6 +117,7 @@ export default class BoardController extends AbstractController {
             this.view.render(this.store.all());
             this.view.displayItemKeyBox('itemBoardLength', true);
             this.uiState.showBoard(this.dataType);
+            this.setMessage({ text: `Board reloaded`, type: 'info' });
         } catch (e) {
             console.error('ERROR:BoardController:reset', e);
         }
@@ -136,42 +149,30 @@ export default class BoardController extends AbstractController {
 
     revertDelete(data) {
         try {
-            const payload = this.store.normalize(data.cache);
-            if (payload && payload.id) {
-                this.store.addById(payload);
-                this.setMessage({ text: `Delete commit successfully reverted`, type: 'success' });
-                this.nextIndexRevert(data);
-            }
+            this.store.addById(data);
+            this.setMessage({ text: `Delete commit successfully reverted`, type: 'success' });
+            this.nextIndexRevert(data);
         } catch (e) {
-            console.error('ERROR:BoardController:revert', e);
+            console.error('ERROR:BoardController:revertDelete', e);
+            this.setMessage({text: `Revert delete commit failed.`, type: 'warning'});
         }
     }
 
     nextIndexRevert (data) {
-        if (/^\d*$/.test(`${data.index}`)) {
-            this.events.emit('commit:reverted', data.index + 1);
+        if (/^\d{1,11}$/.test(`${data.index}`)) {
+            this.events.emit('commit:reverted', parseInt(data.index, 10) + 1);
         }
     }
 
     remove(id) {
         try {
             const revertCache = {...this.store.getById(id)};
-            let setCommit = false;
 
-            if (this.dataType === 'category') {
-                this.service.removeCategory(id);
-                setCommit = true;
-            }
-
-            if (this.dataType === 'item') {
-                this.service.removeItem(id);
-                if (!this.uiState.isCategoryView()) {
-                    setCommit = true;
-                }
-            }
+            this.service.remove(id);
             this.view.renderBoardItemsCount();
             this.setMessage({ text: `Delete data succeed.`, type: 'success' });
-            if (setCommit) {
+
+            if (this.dataType === 'category' || this.dataType === 'item' && !this.uiState.isCategoryView()) {
                 this.events.emit('commit:add', {
                     action: 'delete',
                     type: this.dataType,

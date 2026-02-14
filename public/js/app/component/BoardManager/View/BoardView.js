@@ -18,10 +18,13 @@ export default class BoardView extends AbstractView {
 
     render(collection) {
         try {
-            this.wrapper.innerHTML = '';
+            const fragment = document.createDocumentFragment();
             collection.forEach(data => {
-                this.wrapper.appendChild(this.createNode(data));
+                fragment.appendChild(this.createNode(data));
             });
+
+            this.wrapper.innerHTML = '';
+            this.wrapper.appendChild(fragment);
             this.renderBoardItemsCount();
         } catch (e) {
             console.error('ERROR:BoardView:render', e);

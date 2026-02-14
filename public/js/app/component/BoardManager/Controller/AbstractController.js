@@ -17,6 +17,11 @@ export default class AbstractController {
             if (eventList.length) {
                 eventList.forEach(event => {
                     let eventAct = `${this.dataType}:${event.action}`;
+
+                    if(this.activeListenerExistsByEventAct(eventAct)) {
+                        return;
+                    }
+
                     let callback = event?.callback ?? null;
 
                     if (!callback) {
@@ -47,14 +52,19 @@ export default class AbstractController {
             const eventActions = (this.dataType === 'commit') ? BOARD_EVENT_ACTIONS[this.dataType] : BOARD_EVENT_ACTIONS['board'];
             if (!eventActions) {return;}
             Object.values(eventActions).forEach(action => {
-                const eventName = `click:${this.dataType}:${action}`;
+                const eventAct = `click:${this.dataType}:${action}`;
+
+                if(this.activeListenerExistsByEventAct(eventAct)) {
+                    return;
+                }
+
                 const methodName = action.replace(/:([a-z])/g, (m) => m[1].toUpperCase());
 
                 if (typeof this[methodName] === 'function') {
                     const boundCallback = this[methodName].bind(this);
-                    this.events.on(eventName, boundCallback);
+                    this.events.on(eventAct, boundCallback);
                     this._activeListeners = this._activeListeners || [];
-                    this._activeListeners.push({ eventName, boundCallback });
+                    this._activeListeners.push({ eventAct, boundCallback });
                 } else {
                     console.warn(`Action ${action} triggered, but method ${methodName} is not implemented in ${this.constructor.name}`);
                 }
@@ -62,6 +72,10 @@ export default class AbstractController {
         } catch (e) {
             console.error('ERROR:AbstractController:bindUserClickEvents', e);
         }
+    }
+
+    activeListenerExistsByEventAct(eventAct) {
+        return this._activeListeners.some(listener => listener.eventAct === eventAct);
     }
 
     addBusListener(eventAct, callback) {
