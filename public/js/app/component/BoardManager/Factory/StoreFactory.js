@@ -49,4 +49,8 @@ export default class StoreFactory {
             throw e;
         }
     }
+
+    sortCatItemsAsc(collection) {
+        return [...collection].sort((a, b) => a - b);
+    }
 }

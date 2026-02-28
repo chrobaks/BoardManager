@@ -2,10 +2,11 @@ import Utils from '../../../core/Utils.js';
 import StoreFactory from '../Factory/StoreFactory.js';
 
 export default class AbstractStore {
-    constructor(collection, schema = {}) {
+    constructor(collection, formType = {}, categoryItemMapStore) {
         this.collection = collection;
-        this.schema = schema;
-        this.factory = new StoreFactory(schema);
+        this.formType = formType;
+        this.categoryItemMapStore = categoryItemMapStore;
+        this.factory = new StoreFactory(formType);
     }
 
     all() {
@@ -34,6 +35,7 @@ export default class AbstractStore {
 
     addById(obj) {
         const payload = this.normalize(obj.cache);
+        const lengthBefore = this.collection.length;
 
         if (!('id' in payload) || (payload.id ?? null) === null) {
             throw new Error(`ERROR:AbstractStore:addById payload id not found.`);
@@ -45,6 +47,8 @@ export default class AbstractStore {
         } else {
             this.collection.splice(index, 0, payload);
         }
+
+        return lengthBefore < this.collection.length;
     }
 
     update(update) {
@@ -67,10 +71,6 @@ export default class AbstractStore {
         this.collection.splice(index, 1);
 
         return (this.collection.length < collectionLength);
-    }
-
-    sortCatItemsAsc(collection) {
-        return [...collection].sort((a, b) => a - b);
     }
 
     normalize(data) {

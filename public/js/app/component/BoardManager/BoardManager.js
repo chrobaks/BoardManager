@@ -5,6 +5,7 @@ import TemplateService from './Service/TemplateService.js';
 // State
 import CategoryStore from './State/CategoryStore.js';
 import ItemStore from './State/ItemStore.js';
+import CategoryItemMapStore from './State/CategoryItemMapStore.js';
 import CommitStore from './State/CommitStore.js';
 import UIState from './State/UIState.js';
 import CommitState from './State/CommitState.js';
@@ -45,14 +46,14 @@ export default class BoardManager {
      * @param {Object} importData
      * @param {ModalAdapter} modal
      * @param {EventBus} eventBus
-     * @param {DomEventManager} domManager
+     * @param {DomEventManager} domEventManager
      */
-    constructor(container, importData, modal, eventBus, domManager) {
+    constructor(container, importData, modal, eventBus, domEventManager) {
         this.container = container;
         this.importData = importData;
         this.modal = modal;
         this.eventBus = eventBus;
-        this.domManager = domManager;
+        this.domEventManager = domEventManager;
 
         this.init();
     }
@@ -68,7 +69,6 @@ export default class BoardManager {
     /* Services             */
     /* -------------------- */
     initServices() {
-        // this.eventBus = new EventBusService();
         this.categoryIdService = new IdService(this.importData.json.category);
         this.itemIdService = new IdService(this.importData.json.items);
         this.templateService = new TemplateService(this.importData.templates);
@@ -78,14 +78,21 @@ export default class BoardManager {
     /* State                */
     /* -------------------- */
     initState() {
+        this.categoryItemMapStore = new CategoryItemMapStore(
+            structuredClone(this.importData.json.categoryItemMap || []),
+            structuredClone(this.importData.json.formType.categoryItemMap || {})
+        );
         this.categoryStore = new CategoryStore(
             structuredClone(this.importData.json.category || []),
-            structuredClone(this.importData.json.formType.category || {})
+            structuredClone(this.importData.json.formType.category || {}),
+            this.categoryItemMapStore
         );
         this.itemStore = new ItemStore(
             structuredClone(this.importData.json.items || []),
-            structuredClone(this.importData.json.formType.item || {})
+            structuredClone(this.importData.json.formType.item || {}),
+            this.categoryItemMapStore
         );
+
         this.commitStore = new CommitStore();
         this.commitState = new CommitState();
         this.uiState = new UIState({

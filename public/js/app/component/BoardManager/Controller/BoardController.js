@@ -167,7 +167,6 @@ export default class BoardController extends AbstractController {
     remove(id) {
         try {
             const revertCache = {...this.store.getById(id)};
-
             this.service.remove(id);
             this.view.renderBoardItemsCount();
             this.setMessage({ text: `Delete data succeed.`, type: 'success' });

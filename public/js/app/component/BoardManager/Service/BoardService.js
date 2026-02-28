@@ -78,7 +78,7 @@ export default class BoardService {
         }
         this.store.removeItem(cat, data.id);
 
-        return cat;
+        return this.store.getById(activeId);
     }
 
     getCommitArguments(data) {

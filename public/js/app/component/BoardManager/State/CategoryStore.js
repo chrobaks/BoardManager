@@ -1,16 +1,83 @@
 import AbstractStore from './AbstractStore.js';
 
 export default class CategoryStore extends AbstractStore {
-    constructor(categories = [], typeSchema) {
-        super(categories, typeSchema);
+    constructor(categories = [], formType, categoryItemMapStore) {
+        super(categories, formType, categoryItemMapStore);
     }
 
-    /**
-     *
-     * @returns {void}
-     * @throws Error
-     * @param data
-     */
+    all() {
+        return this.collection.map(cat => {
+            return {
+                ... cat,
+                items: this.categoryItemMapStore.getItemsByCategory(cat.id)
+            }
+        });
+    }
+
+    add(obj) {
+        try {
+            const payload = this.factory.normalize(obj);
+            const { items, ...categoryData } = payload;
+
+            if (super.add(categoryData)) {
+                if (Array.isArray(items) && items.length > 0) {
+                    this.categoryItemMapStore.setCategoryItems(payload);
+                }
+
+                return true;
+            }
+        } catch (e) {
+            console.error('ERROR:AbstractStore:add', e);
+        }
+
+        return false;
+    }
+
+    addById(obj) {
+        const payload = this.factory.normalize(obj.cache);
+        const { items, ...categoryData } = payload;
+
+        if (super.addById({ cache: categoryData })) {
+            if (Array.isArray(items) && items.length > 0) {
+                this.categoryItemMapStore.setCategoryItems(payload);
+            }
+        }
+    }
+
+    getById(id) {
+        const cat =  super.getById(id);
+        if (!cat?.id) {
+            throw new Error(`ERROR:CategoryStore:getById category not found.`);
+        }
+
+        return {
+            ... cat,
+            items: this.categoryItemMapStore.getItemsByCategory(cat.id)
+        }
+    }
+
+    update(updateData) {
+        const payload = this.factory.normalize(updateData);
+
+        if (Array.isArray(payload.items)) {
+            this.categoryItemMapStore.setCategoryItems(payload);
+
+            delete payload.items;
+        }
+
+        return super.update(payload);
+    }
+
+    remove(id) {
+        if (super.remove(id)) {
+            this.categoryItemMapStore.deleteCategory(id);
+
+            return true;
+        }
+
+        return false;
+    }
+
     reinsertItem(data) {
         const itemId = data?.payload?.itemId ?? null;
         const revertData = data?.cache ?? null;
@@ -26,7 +93,7 @@ export default class CategoryStore extends AbstractStore {
             }
 
             cat.items.push(itemId)
-            cat.items = this.sortCatItemsAsc(cat.items);
+            cat.items = this.factory.sortCatItemsAsc(cat.items);
             this.update(cat);
         }
     }
@@ -38,10 +105,8 @@ export default class CategoryStore extends AbstractStore {
         const removedIdList = [];
 
         this.collection.forEach(cat => {
-            if (!Array.isArray(cat.items)) return;
-
-            if (cat.items.includes(itemId)) {
-                this.removeItem(cat, itemId);
+            if (this.categoryItemMapStore.hasItemInCategory(cat.id, itemId)) {
+                this.categoryItemMapStore.deleteItemFromCategory(cat.id, itemId);
                 removedIdList.push(cat.id);
             }
         });
@@ -50,6 +115,6 @@ export default class CategoryStore extends AbstractStore {
     }
 
     removeItem(category, itemId) {
-        category.items = category.items.filter(id => id !== itemId);
+        this.categoryItemMapStore.deleteItemFromCategory(category.id, itemId);
     }
 }

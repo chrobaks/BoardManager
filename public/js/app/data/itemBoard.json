@@ -7,9 +7,17 @@
         {"id":5,"name":"Bundle 5","version":"1","description":"Lorem ipsum"}
     ],
     "category":[
-        {"id":1,"name":"Core Package","description":"A basic package","version":"1","items":[1,2]},
-        {"id":2,"name":"Test Package","description":"A test package","version":"1","items":[2]},
-        {"id":3,"name":"Public Package","description":"A public package","version":"1","items":[1,2,3]}
+        {"id":1,"name":"Core Package","description":"A basic package","version":"1"},
+        {"id":2,"name":"Test Package","description":"A test package","version":"1"},
+        {"id":3,"name":"Public Package","description":"A public package","version":"1"}
+    ],
+    "categoryItemMap" : [
+        {"category_id":1,"item_id":1},
+        {"category_id":1,"item_id":2},
+        {"category_id":2,"item_id":2},
+        {"category_id":3,"item_id":1},
+        {"category_id":3,"item_id":2},
+        {"category_id":3,"item_id":3}
     ],
     "categoryForm":[
         {"name":"id","value":0,"element":"input","type":"hidden","title":"Id","selector":"","required":"required"},
@@ -101,6 +109,26 @@
                     { "rule": "required", "message": "Description is mandatory" },
                     { "rule": "max_length", "params": { "value": 225 }, "message": "maximum characters 225" },
                     { "rule": "min_length", "params": { "value": 2 }, "message": "Minimal characters 2" }
+                ]
+            }
+        },
+        "categoryItemMap": {
+            "id": {
+                "type": "number",
+                "constraints": [
+                    { "rule": "required", "message": "Id is mandatory" }
+                ]
+            },
+            "category_id": {
+                "type": "number",
+                "constraints": [
+                    { "rule": "required", "message": "Category Id is mandatory" }
+                ]
+            },
+            "item_id": {
+                "type": "number",
+                "constraints": [
+                    { "rule": "required", "message": "Item Id is mandatory" }
                 ]
             }
         }
