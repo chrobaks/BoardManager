@@ -31,12 +31,12 @@ export default class CategoryService extends BoardService {
 
         this.view.toggleBoxItem(payload.id);
 
-        if (this.uiState.isBoardView(this.dataType)) {
+        if (this.boardState.isBoardView(this.dataType)) {
             catItems = cat.items;
-            this.uiState.showCategory(payload.id);
+            this.boardState.showCategory(payload.id);
             this.view.displayItemKeyBox('itemBoardLength', false);
         } else {
-            this.uiState.showBoard(this.dataType);
+            this.boardState.showBoard(this.dataType);
             this.view.displayItemKeyBox('itemBoardLength', true);
         }
         this.events.emit('item:show:cat:items', catItems);
@@ -47,11 +47,10 @@ export default class CategoryService extends BoardService {
             this.store.remove(id);
             this.view.render(this.store.all());
 
-            if (this.uiState.isCategoryView()) {
-                this.uiState.showBoard(this.dataType);
+            if (this.boardState.isCategoryView()) {
+                this.boardState.showBoard(this.dataType);
             }
             this.events.emit('item:reset', {});
-            this.view.renderBoardItemsCount();
         } catch(err) {
             console.error('ERROR:CategoryService:remove', err);
         }

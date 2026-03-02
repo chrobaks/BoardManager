@@ -2,8 +2,8 @@ import BoardController from './BoardController.js';
 import CategoryService from '../Service/CategoryService.js';
 
 export default class CategoryController extends BoardController {
-    constructor(store, view, eventBus, idService, uiState) {
-        super(store, view, eventBus, idService, uiState, 'category', CategoryService);
+    constructor(store, view, eventBus, idService, boardState) {
+        super(store, view, eventBus, idService, boardState, 'category', CategoryService);
 
         this.init([
             {action:'add'},
@@ -35,7 +35,7 @@ export default class CategoryController extends BoardController {
             let emitAction = 'deleteItemFromAll';
             let cache = [];
 
-            if (this.uiState.isBoardView(this.dataType)) {
+            if (this.boardState.isBoardView(this.dataType)) {
                 cache = this.store.removeItemFromAll(data.id);
             } else {
                 const cat = this.service.deleteItemFromCategory(data);

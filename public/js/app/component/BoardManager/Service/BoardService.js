@@ -6,7 +6,7 @@ export default class BoardService {
      * @param dependencies.view instances of  BoardView
      * @param dependencies.eventBus instances of  EventBus
      * @param dependencies.idService instances of  IdService
-     * @param dependencies.uiState UiState
+     * @param dependencies.boardState instances of BoardState
      * @param dependencies.dataType string
      */
     constructor(dependencies) {
@@ -14,52 +14,71 @@ export default class BoardService {
         this.view = dependencies.view ?? null;
         this.events = dependencies.eventBus ?? null;
         this.idService = dependencies.idService ?? null;
-        this.uiState = dependencies.uiState ?? null;
+        this.boardState = dependencies.boardState ?? null;
         this.dataType = dependencies.dataType ?? null;
     }
 
     addData(data) {
-        data.id = this.idService.next();
-        const addOk = this.store.add(data);
+        const addOk = this.addToStore(data);
         if (addOk) {
-            this.view.render(this.store.all());
-            this.view.renderBoardItemsCount();
-            this.view.applyScrollLimitIfNeeded();
-            this.view.scrollIntoView();
+            this.afterAddUi();
         }
 
         return addOk;
     }
 
+    addToStore(data) {
+        data.id = this.idService.next();
+        return this.store.add(data);
+    }
+
+    afterAddUi() {
+        this.view.render(this.store.all());
+        this.view.renderBoardItemsCount();
+        this.view.applyScrollLimitIfNeeded();
+        this.view.scrollIntoView();
+    }
+
     updateByDataType(data) {
         try {
-            this.store.update(data)
-            if (this.uiState.isBoardView(this.dataType)) {
-                this.view.render(this.store.all());
-            } else {
-                if (this.dataType === 'category') {
-                    this.updateCategory();
-                } else if (this.dataType === 'item') {
-                    this.updateItems();
-                }
-            }
+            this.updateInStore(data);
+            this.afterUpdateUi(data);
         } catch(e) {
             console.error('ERROR:BoardService:updateByDataType', e, data);
             throw e;
         }
     }
 
+    updateInStore(data) {
+        this.store.update(data);
+    }
+
+    afterUpdateUi(data) {
+        if (this.boardState.isBoardView(this.dataType)) {
+            this.view.render(this.store.all());
+            return;
+        }
+
+        if (this.dataType === 'category') {
+            this.updateCategory();
+        } else if (this.dataType === 'item') {
+            this.updateItems();
+        }
+    }
+
     updateCategory() {
-        const cat = this.store.getById(this.uiState.getActiveId(this.dataType));
+        const cat = this.store.getById(this.boardState.getActiveId(this.dataType));
+
         if (!cat?.items) {
             throw new Error(`ERROR:BoardService:updateCategory category not found.`);
         }
+
         this.view.renderNodeData(cat);
         this.events.emit('item:show:cat:items', cat.items);
     }
 
     updateItems() {
-        const item = this.store.getById(this.uiState.getActiveId(this.dataType));
+        const item = this.store.getById(this.boardState.getActiveId(this.dataType));
         if (!item) {
             throw new Error(`ERROR:BoardService:updateItems category not found.`);
         }
@@ -67,7 +86,7 @@ export default class BoardService {
     }
 
     deleteItemFromCategory(data) {
-        const activeId = this.uiState.getActiveId(this.dataType);
+        const activeId = this.boardState.getActiveId(this.dataType);
         if (!activeId) {
             throw new Error(`ERROR:BoardService:deleteItemFromCategory activeId not found.`);
         }

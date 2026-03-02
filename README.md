@@ -1,9 +1,39 @@
 # BoardManager - Modular Vanilla JS Management Dashboard
 
-![BoardManager Screenshot](screenshots/Screenshot.png)
 
 
-BoardManager is a lightweight, component-based web application for managing categories and items. The project is developed using **Vanilla JavaScript (ES6+)**.
+
+## What this application is
+
+BoardManager is a small prototype web application with two dynamic boards: a **Category board** and an **Item board**.
+
+## Category ↔ Item relation
+
+Categories and items can be created, edited, and removed at runtime.  
+A category can contain multiple items.  
+When you open a category, the item board can switch to show only the items linked to that category.
+
+## Commit workflow (offline changes + revert)
+
+The application also provides a **Commit mode**.  
+In this mode, changes are stored locally as commits instead of being applied immediately.
+
+You can:
+- create multiple commits while working “offline”,
+- review the commit list,
+- revert commits one by one in waterfall order (step-by-step),
+- submit all pending commits as a batch when you are ready.
+
+### Default Screen
+<img src="screenshots/Screenshot.png" alt="BoardManager Screenshot" height="300"> 
+<br>
+
+### Editmode Screen
+<img src="screenshots/Screenshot-2.png" alt="BoardManager Screenshot" height="300">  
+
+
+---
+
 
 ## Key Features
 
@@ -48,7 +78,7 @@ The project follows a strict modular structure:
 
 ### 1. Core Layer (`public/js/app/core/`)
 The application's base infrastructure provides the glue between components:
-- **EventBus.js:** A central Pub/Sub system that enables decoupled communication between different modules (e.g., notifying the Store when a Controller action occurs).
+- **EventBus.js:** A central Pub/Sub system that enables decoupled communication between different modules (e.g., notifying a Store when a Controller action occurs).
 - **DomEventManager.js:** A specialized utility for handling DOM events efficiently, ensuring clean event binding and delegation.
 - **Api.js:** Automated component initialization and data import logic.
 - **Modal & ModalAdapter:** A decoupled modal system for user interaction, abstracting Bootstrap's modal logic.
@@ -56,18 +86,23 @@ The application's base infrastructure provides the glue between components:
 - **Utils.js:** General purpose utility functions used across the application.
 
 ### 2. State Layer (`State/`)
-Manages data integrity and persistence:
-- **AbstractStore:** Base class for all data operations, including a `schema`-based `normalize` process that ensures data (e.g., from the DOM) is correctly cast (Strings to Numbers, etc.).
-- **ItemStore / CategoryStore:** Specific implementations for managing application resources.
+Keeps UI-related state and view modes (no persistence):
+- **BoardState / CommitState:** Store UI state such as the current view/mode, selections, and UI flags.
 
-### 3. Controller Layer (`Controller/`)
-The bridge between View and State:
+### 3. Store Layer (`Store/`)
+Manages data integrity, normalization, and persistence-related state:
+- **AbstractStore:** Base class for all data operations, including a `schema`-based `normalize` process that ensures data (e.g., from the DOM) is correctly cast (Strings to Numbers, etc.).
+- **ItemStore / CategoryStore / CommitStore:** Concrete stores for managing application resources and queued changes.
+- **CategoryItemMapStore:** Store for mapping relations between categories and items.
+
+### 4. Controller Layer (`Controller/`)
+The bridge between View and State/Store:
 - **AbstractController:** Contains DRY (Don't Repeat Yourself) logic for standard actions such as `add`, `edit`, `delete`, and `modalForm`.
 - **Specific Controllers:** Inherit from AbstractController and implement individual business logic (e.g., linking items to categories).
 
-### 4. View Layer (`View/`)
+### 5. View Layer (`View/`)
 Responsible for rendering:
-- **BoardView:** Utilizes HTML templates (`<template>`) to display data efficiently and reactively in the UI, responding to state changes.
+- **BoardView:** Utilizes HTML templates (`<template>`) to display data efficiently and reactively in the UI, responding to state/store changes.
 
 ---
 
@@ -115,7 +150,8 @@ BoardManager/
 │   │   │   ├── component/
 │   │   │   │   └── BoardManager/      # Main component
 │   │   │   │       ├── Controller/    # Business logic
-│   │   │   │       ├── State/         # Data stores
+│   │   │   │       ├── State/         # Ui state
+│   │   │   │       ├── Store/         # Data stores
 │   │   │   │       ├── View/          # UI rendering
 │   │   │   │       ├── Factory/       # UI Component factories
 │   │   │   │       └── Service/       # Helper services (IDs, Templates)
@@ -123,6 +159,6 @@ BoardManager/
 │   │   │   └── App.js                 # Entry point
 │   ├── css/                           # Styling (App & Bootstrap)
 │   └── data/                          # JSON data sources
-├── index.html                          # Entry page with HTML templates
+├── index.html                         # Entry page with HTML templates
 └── README.md
 ```

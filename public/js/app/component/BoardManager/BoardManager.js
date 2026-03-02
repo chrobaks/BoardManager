@@ -2,12 +2,14 @@
 import IdService from './Service/IdService.js';
 import TemplateService from './Service/TemplateService.js';
 
+// Store
+import CategoryStore from './Store/CategoryStore.js';
+import ItemStore from './Store/ItemStore.js';
+import CategoryItemMapStore from './Store/CategoryItemMapStore.js';
+import CommitStore from './Store/CommitStore.js';
+
 // State
-import CategoryStore from './State/CategoryStore.js';
-import ItemStore from './State/ItemStore.js';
-import CategoryItemMapStore from './State/CategoryItemMapStore.js';
-import CommitStore from './State/CommitStore.js';
-import UIState from './State/UIState.js';
+import BoardState from './State/BoardState.js';
 import CommitState from './State/CommitState.js';
 
 // View
@@ -61,6 +63,7 @@ export default class BoardManager {
     init() {
         this.initServices();
         this.initState();
+        this.initStore();
         this.initView();
         this.initController();
     }
@@ -78,6 +81,24 @@ export default class BoardManager {
     /* State                */
     /* -------------------- */
     initState() {
+        this.commitState = new CommitState();
+        this.boardState = new BoardState({
+            mode: {
+                category: 'board',
+                item: 'board'
+                ,            },
+            activeId: {
+                category: 0,
+                item: 0
+            }
+        });
+    }
+
+
+    /* -------------------- */
+    /* Store                */
+    /* -------------------- */
+    initStore() {
         this.categoryItemMapStore = new CategoryItemMapStore(
             structuredClone(this.importData.json.categoryItemMap || []),
             structuredClone(this.importData.json.formType.categoryItemMap || {})
@@ -94,17 +115,6 @@ export default class BoardManager {
         );
 
         this.commitStore = new CommitStore();
-        this.commitState = new CommitState();
-        this.uiState = new UIState({
-            mode: {
-                category: 'board',
-                item: 'board'
-,            },
-            activeId: {
-                category: 0,
-                item: 0
-            }
-        });
     }
 
     /* -------------------- */
@@ -143,7 +153,7 @@ export default class BoardManager {
             this.categoryView,
             this.eventBus,
             this.categoryIdService,
-            this.uiState
+            this.boardState
         );
 
         this.itemController = new ItemController(
@@ -151,7 +161,7 @@ export default class BoardManager {
             this.itemView,
             this.eventBus,
             this.itemIdService,
-            this.uiState
+            this.boardState
         );
 
         this.modalController = new ModalController(

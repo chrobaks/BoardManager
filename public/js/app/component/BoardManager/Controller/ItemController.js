@@ -2,8 +2,8 @@ import BoardController from './BoardController.js';
 import ItemService from '../Service/ItemService.js';
 
 export default class ItemController extends BoardController {
-    constructor(store, view, eventBus, idService, uiState) {
-        super(store, view, eventBus, idService, uiState, 'item', ItemService);
+    constructor(store, view, eventBus, idService, boardState) {
+        super(store, view, eventBus, idService, boardState, 'item', ItemService);
 
         this.init([
             {action:'add'},
@@ -24,7 +24,7 @@ export default class ItemController extends BoardController {
             let items = [];
             catItems.forEach(id => items.push(this.store.getById(id)));
             this.view.render(items);
-            this.uiState.showBoard('item');
+            this.boardState.showBoard('item');
         } else {
             this.view.render(this.store.all());
         }

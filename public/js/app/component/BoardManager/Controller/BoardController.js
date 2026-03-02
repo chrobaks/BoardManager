@@ -7,18 +7,18 @@ export default class BoardController extends AbstractController {
      * @param {BoardView} view
      * @param {EventBus} eventBus
      * @param {IdService} idService
-     * @param {UIState} uiState
+     * @param {BoardState} boardState
      * @param {string} dataType
      * @param {typeof CategoryService | typeof ItemService} Service
      */
-    constructor(store, view, eventBus, idService, uiState, dataType, Service) {
+    constructor(store, view, eventBus, idService, boardState, dataType, Service) {
         try {
-            super(store, view, eventBus, idService, uiState, dataType);
+            super(store, view, eventBus, idService, boardState, dataType);
             if (typeof Service !== 'function') {
                 throw new Error('Service is not a constructor');
             }
 
-            this.service = new Service({store, view, eventBus, idService, uiState, dataType});
+            this.service = new Service({store, view, eventBus, idService, boardState, dataType});
             this.error = [];
         } catch (e) {
             console.error('ERROR:BoardController:initListHeightAndEnableScroll', e);
@@ -116,7 +116,7 @@ export default class BoardController extends AbstractController {
         try {
             this.view.render(this.store.all());
             this.view.displayItemKeyBox('itemBoardLength', true);
-            this.uiState.showBoard(this.dataType);
+            this.boardState.showBoard(this.dataType);
             this.setMessage({ text: `Board reloaded`, type: 'info' });
         } catch (e) {
             console.error('ERROR:BoardController:reset', e);
@@ -171,7 +171,7 @@ export default class BoardController extends AbstractController {
             this.view.renderBoardItemsCount();
             this.setMessage({ text: `Delete data succeed.`, type: 'success' });
 
-            if (this.dataType === 'category' || this.dataType === 'item' && !this.uiState.isCategoryView()) {
+            if (this.dataType === 'category' || this.dataType === 'item' && !this.boardState.isCategoryView()) {
                 this.events.emit('commit:add', {
                     action: 'delete',
                     type: this.dataType,

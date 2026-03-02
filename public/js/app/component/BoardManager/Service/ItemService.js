@@ -12,11 +12,11 @@ export default class ItemService extends BoardService {
         }
 
         this.view.toggleBoxItem(payload.id);
-        if (this.uiState.isBoardView(this.dataType)) {
-            this.uiState.showItem(payload.id);
+        if (this.boardState.isBoardView(this.dataType)) {
+            this.boardState.showItem(payload.id);
             this.view.displayItemKeyBox('itemBoardLength', false);
         } else {
-            this.uiState.showBoard(this.dataType);
+            this.boardState.showBoard(this.dataType);
             this.view.displayItemKeyBox('itemBoardLength', true);
         }
     }
@@ -25,7 +25,7 @@ export default class ItemService extends BoardService {
         try {
             this.events.emit('category:delete:item', {id: id});
 
-            if (this.uiState.isBoardView('category')) {
+            if (this.boardState.isBoardView('category')) {
                 this.store.remove(id);
                 this.view.render(this.store.all());
             }

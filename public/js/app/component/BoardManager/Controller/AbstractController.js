@@ -1,12 +1,12 @@
 import { BOARD_EVENT_ACTIONS } from '../BoardManager.js';
 
 export default class AbstractController {
-    constructor(store, view, eventBus, idService, uiState, dataType) {
+    constructor(store, view, eventBus, idService, boardState, dataType) {
         this.store = store;
         this.view = view;
         this.events = eventBus;
         this.idService = idService;
-        this.uiState = uiState;
+        this.boardState = boardState;
         this.dataType = dataType;
         this.error = [];
         this._activeListeners = [];
