@@ -23,9 +23,9 @@ export default class CommitView extends AbstractView {
         this.autoCommitSwitch = this.container.querySelector(selector);
     }
 
-    showCommitCtrl(hasChanges) {
+    showCommitCtrl(hasCommits) {
         if (this.btnCommitCtrl) {
-            if (hasChanges) {
+            if (hasCommits) {
                 this.btnCommitCtrl.forEach(btn => btn.removeAttribute('disabled'));
             } else {
                 this.btnCommitCtrl.forEach(btn => {

@@ -1,10 +1,19 @@
 export default class BoardService {
     /**
+     * Contract (Create vs Update)
+     *
+     * Create (addData / addToStore):
+     * - Incoming data may have no valid id (id may be missing/0).
+     * - BoardService ALWAYS assigns a new auto-id (id >= 1) via IdService.
+     *
+     * Update (updateByDataType / updateInStore):
+     * - Incoming data MUST contain a valid id (id >= 1).
+     * - Store.update mutates the existing entity in the collection (via getRawById).
      *
      * @param dependencies
      * @param dependencies.store instances of Store
      * @param dependencies.view instances of  BoardView
-     * @param dependencies.eventBus instances of  EventBus
+     * @param dependencies.domEventManager instances of  DomEventManager
      * @param dependencies.idService instances of  IdService
      * @param dependencies.boardState instances of BoardState
      * @param dependencies.dataType string
@@ -12,7 +21,7 @@ export default class BoardService {
     constructor(dependencies) {
         this.store = dependencies.store ?? null;
         this.view = dependencies.view ?? null;
-        this.events = dependencies.eventBus ?? null;
+        this.domEventManager = dependencies.domEventManager ?? null;
         this.idService = dependencies.idService ?? null;
         this.boardState = dependencies.boardState ?? null;
         this.dataType = dependencies.dataType ?? null;
@@ -28,8 +37,10 @@ export default class BoardService {
     }
 
     addToStore(data) {
-        data.id = this.idService.next();
-        return this.store.add(data);
+        return this.store.add({
+            ...data,
+            id: this.idService.next()
+        });
     }
 
     afterAddUi() {
@@ -74,7 +85,7 @@ export default class BoardService {
         }
 
         this.view.renderNodeData(cat);
-        this.events.emit('item:show:cat:items', cat.items);
+        this.domEventManager.eventBus.emit('item:show:cat:items', cat.items);
     }
 
     updateItems() {

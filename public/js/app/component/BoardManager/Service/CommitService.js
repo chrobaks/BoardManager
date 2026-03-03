@@ -4,43 +4,54 @@ export default class CommitService {
      *
      * @param {CommitStore} store
      * @param {CommitView}  view
-     * @param {EventBus} events
-     * @param {CommitFactory} factory
+     * @param {DomEventManager} domEventManager
+     * @param dataType
      */
-    constructor(store, view, events, factory) {
+    constructor(store, view, domEventManager, dataType) {
         this.store = store;
         this.view = view;
-        this.events = events;
-        this.factory = factory;
+        this.domEventManager = domEventManager;
+        this.dataType = dataType;
     }
 
     handlePayloadRevert(payload) {
-        if (payload && payload.type) {
-            this.events.emit(
-                this.factory.getEventAction(payload),
-                { cache: payload.cache, payload: payload.payload}
-            );
-            this.events.emit(
-                this.factory.getEventAction({type: payload.type, action: 'reset'}),
-                {}
-            );
+        try {
+            if (payload && payload.type) {
+                this.domEventManager.eventBus.emit(
+                    this.domEventManager.eventIdentifierFromCustomer(this.dataType, payload),
+                    {cache: payload.cache, payload: payload.payload}
+                );
+                this.domEventManager.eventBus.emit(
+                    this.domEventManager.eventIdentifierFromCustomer(this.dataType, {
+                        type: payload.type,
+                        action: 'reset'
+                    }),
+                    {}
+                );
+            }
+        } catch (error) {
+            console.error('ERROR:CommitService:handlePayloadRevert', error);
         }
     }
 
     handleCommitRevert(index) {
-        const commit = this.store.getRevertByIndex(index);
-        if (commit && commit.type) {
-            this.events.emit(
-                this.factory.getEventAction(commit),
-                {index: index, cache: commit.cache, payload: commit.payload}
-            );
+        try {
+            const commit = this.store.getRevertByIndex(index);
+            if (commit && commit.type) {
+                this.domEventManager.eventBus.emit(
+                    this.domEventManager.eventIdentifierFromCustomer(this.dataType, commit),
+                    {index: index, cache: commit.cache, payload: commit.payload}
+                );
+            }
+        } catch (error) {
+            console.error('ERROR:CommitService:handleCommitRevert', error);
         }
     }
 
     handleRevertFinished() {
         this.updateCommits();
-        this.events.emit('category:reset', {});
-        this.events.emit('item:reset', {});
+        this.domEventManager.eventBus.emit('category:reset', {});
+        this.domEventManager.eventBus.emit('item:reset', {});
     }
 
     displayCommitList() {

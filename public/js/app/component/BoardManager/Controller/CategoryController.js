@@ -2,8 +2,8 @@ import BoardController from './BoardController.js';
 import CategoryService from '../Service/CategoryService.js';
 
 export default class CategoryController extends BoardController {
-    constructor(store, view, eventBus, idService, boardState) {
-        super(store, view, eventBus, idService, boardState, 'category', CategoryService);
+    constructor(store, view, domEventManager, idService, boardState) {
+        super(store, view, domEventManager, idService, boardState, 'category', CategoryService);
 
         this.init([
             {action:'add'},
@@ -23,7 +23,7 @@ export default class CategoryController extends BoardController {
     revertItem(data) {
         try {
             this.store.reinsertItem(data);
-            this.events.emit('commit:reverted', data.index + 1);
+            this.domEventManager.eventBus.emit('commit:reverted', data.index + 1);
         } catch (error) {
             console.error('ERROR:CategoryController:revertItem', error);
         }
@@ -39,13 +39,13 @@ export default class CategoryController extends BoardController {
                 cache = this.store.removeItemFromAll(data.id);
             } else {
                 const cat = this.service.deleteItemFromCategory(data);
-                this.events.emit('item:show:cat:items', cat.items);
+                this.domEventManager.eventBus.emit('item:show:cat:items', cat.items);
                 emitAction = 'deleteItemFromCategory';
                 cache = [cat.id];
             }
             this.service.updateCategoryItemCount();
             if (this.store.notEmpty(cache)) {
-                this.events.emit('commit:add', {
+                this.domEventManager.eventBus.emit('commit:add', {
                     action: emitAction,
                     type: this.dataType,
                     payload: payload,

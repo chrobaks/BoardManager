@@ -1,0 +1,17 @@
+{
+  "name": "boardmanager",
+  "version": "1.0.0",
+  "description": "Javascript application demo",
+  "type": "module",
+  "scripts": {
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest --coverage"
+  },
+  "devDependencies": {
+    "vitest": "^0.34.0",
+    "@vitest/ui": "^0.34.0",
+    "@vitest/coverage-v8": "^0.34.0",
+    "jsdom": "^22.0.0"
+  }
+}

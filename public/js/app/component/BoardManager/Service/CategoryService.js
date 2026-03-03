@@ -39,7 +39,8 @@ export default class CategoryService extends BoardService {
             this.boardState.showBoard(this.dataType);
             this.view.displayItemKeyBox('itemBoardLength', true);
         }
-        this.events.emit('item:show:cat:items', catItems);
+
+        this.domEventManager.eventBus.emit('item:show:cat:items', catItems);
     }
 
     remove(id) {
@@ -50,7 +51,7 @@ export default class CategoryService extends BoardService {
             if (this.boardState.isCategoryView()) {
                 this.boardState.showBoard(this.dataType);
             }
-            this.events.emit('item:reset', {});
+            this.domEventManager.eventBus.emit('item:reset', {});
         } catch(err) {
             console.error('ERROR:CategoryService:remove', err);
         }

@@ -1,6 +1,5 @@
 
 import AbstractController from './AbstractController.js';
-import CommitFactory from '../Factory/CommitFactory.js';
 import CommitService from '../Service/CommitService.js';
 
 export default class CommitController extends AbstractController {
@@ -9,28 +8,29 @@ export default class CommitController extends AbstractController {
      * @param {CommitView} view
      * @param {CommitState} commitState
      * @param {HTMLElement} container
-     * @param {EventBus} eventBus
+     * @param {DomEventManager} domEventManager
      */
-    constructor(store, view, commitState, container, eventBus) {
-        super(store, view, eventBus, null, null, 'commit');
+    constructor(store, view, commitState, container, domEventManager) {
+        super(store, view, domEventManager, null, null, 'commit');
         this.commitState = commitState;
         this.container = container;
-        this.service = new CommitService(
-            this.store,
-            this.view,
-            this.events,
-            new CommitFactory({
-                'delete': 'revert:delete',
-                'deleteItemFromAll': 'revert:item',
-                'deleteItemFromCategory': 'revert:item',
-                'update': 'revert:update',
-                'add': 'revert:add',
-                'reset': 'reset',
-            })
-        );
     }
 
     init() {
+        this.domEventManager.initCustomerEvents(this.dataType, {
+            'delete': 'revert:delete',
+            'deleteItemFromAll': 'revert:item',
+            'deleteItemFromCategory': 'revert:item',
+            'update': 'revert:update',
+            'add': 'revert:add',
+            'reset': 'reset',
+        });
+        this.service = new CommitService(
+            this.store,
+            this.view,
+            this.domEventManager,
+            this.dataType
+        );
         this.view.init();
         this.commitState.setAutoEnabled(this.view.autoCommitSwitchIsChecked());
         this.view.showCommitCtrl(false);
@@ -68,7 +68,7 @@ export default class CommitController extends AbstractController {
     }
 
     execUndo () {
-        this.events.emit('modal:prompt:delete', {
+        this.domEventManager.eventBus.emit('modal:prompt:delete', {
             type: this.dataType,
             payload: {},
             msg:'Warning!!! All marked commits will be reverted. This will also change the current data! Do you want to continue?'

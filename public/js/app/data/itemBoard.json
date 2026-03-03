@@ -37,7 +37,8 @@
             "id": {
                 "type": "number",
                 "constraints": [
-                    { "rule": "required", "message": "Id is mandatory" }
+                    { "rule": "required", "message": "Id is mandatory" },
+                    { "rule": "range", "params": { "min": 1, "max": 999999999 }, "message": "Id must be >= 1"}
                 ]
             },
             "name": {
@@ -84,7 +85,8 @@
             "id": {
                 "type": "number",
                 "constraints": [
-                    { "rule": "required", "message": "Id is mandatory" }
+                    { "rule": "required", "message": "Id is mandatory" },
+                    {"rule": "range", "params": { "min": 1, "max": 999999999 }, "message": "Id must be >= 1"}
                 ]
             },
             "name": {
@@ -113,22 +115,18 @@
             }
         },
         "categoryItemMap": {
-            "id": {
-                "type": "number",
-                "constraints": [
-                    { "rule": "required", "message": "Id is mandatory" }
-                ]
-            },
             "category_id": {
                 "type": "number",
                 "constraints": [
-                    { "rule": "required", "message": "Category Id is mandatory" }
+                    { "rule": "required", "message": "Category Id is mandatory" },
+                    {"rule": "range", "params": { "min": 1, "max": 999999999 }, "message": "Id must be >= 1"}
                 ]
             },
             "item_id": {
                 "type": "number",
                 "constraints": [
-                    { "rule": "required", "message": "Item Id is mandatory" }
+                    { "rule": "required", "message": "Item Id is mandatory" },
+                    {"rule": "range", "params": { "min": 1, "max": 999999999 }, "message": "Id must be >= 1"}
                 ]
             }
         }

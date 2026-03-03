@@ -5,20 +5,21 @@ export default class BoardController extends AbstractController {
      *
      * @param {CategoryStore | ItemStore} store
      * @param {BoardView} view
-     * @param {EventBus} eventBus
+     * @param {DomEventManager} domEventManager
      * @param {IdService} idService
      * @param {BoardState} boardState
      * @param {string} dataType
      * @param {typeof CategoryService | typeof ItemService} Service
      */
-    constructor(store, view, eventBus, idService, boardState, dataType, Service) {
+    constructor(store, view, domEventManager, idService, boardState, dataType, Service) {
         try {
-            super(store, view, eventBus, idService, boardState, dataType);
+            super(store, view, domEventManager, idService, boardState, dataType);
+
             if (typeof Service !== 'function') {
                 throw new Error('Service is not a constructor');
             }
 
-            this.service = new Service({store, view, eventBus, idService, boardState, dataType});
+            this.service = new Service({store, view, domEventManager, idService, boardState, dataType});
             this.error = [];
         } catch (e) {
             console.error('ERROR:BoardController:initListHeightAndEnableScroll', e);
@@ -45,9 +46,9 @@ export default class BoardController extends AbstractController {
     }
 
     modalForm() {
-        this.events.emit('modal:open:form', {type: this.dataType, payload: {id: 0}});
-        this.events.emit('category:reset', {});
-        this.events.emit('item:reset', {});
+        this.domEventManager.eventBus.emit('modal:open:form', {type: this.dataType, payload: {id: 0}});
+        this.domEventManager.eventBus.emit('category:reset', {});
+        this.domEventManager.eventBus.emit('item:reset', {});
     }
 
     show(data) {
@@ -62,7 +63,7 @@ export default class BoardController extends AbstractController {
         const payload = this.store.normalize(data);
         const obj = this.store.getById(payload.id);
         if (obj) {
-            this.events.emit('modal:open:form', {type: this.dataType, payload: obj});
+            this.domEventManager.eventBus.emit('modal:open:form', {type: this.dataType, payload: obj, mode: 'update'});
         }
     }
 
@@ -70,10 +71,10 @@ export default class BoardController extends AbstractController {
         try {
             if (this.service.addData(data)) {
                 this.setMessage({text: `Add new data succeed.`, type: 'success'});
-                this.events.emit('commit:add', {
+                this.domEventManager.eventBus.emit('commit:add', {
                     action: 'add',
                     type: this.dataType,
-                    payload: data
+                    payload: this.store.getObjetCreatet()
                 });
             } else {
                 this.setMessage({text: `Add new data failed.`, type: 'warning'});
@@ -88,7 +89,7 @@ export default class BoardController extends AbstractController {
             const {payload, cache} = this.service.getCommitArguments(data);
             this.service.updateByDataType(data);
             this.setMessage({ text: `Update data succeed.`, type: 'success' });
-            this.events.emit('commit:add', {
+            this.domEventManager.eventBus.emit('commit:add', {
                 action: 'update',
                 type: this.dataType,
                 payload: payload,
@@ -105,7 +106,7 @@ export default class BoardController extends AbstractController {
             const payload = this.store.normalize(data);
             const obj = {...this.store.getById(payload.id)};
             if (obj) {
-                this.events.emit('modal:prompt:delete', {type: this.dataType, payload: obj});
+                this.domEventManager.eventBus.emit('modal:prompt:delete', {type: this.dataType, payload: obj});
             }
         } catch (e) {
             console.error('ERROR:BoardController:delete', e);
@@ -160,7 +161,7 @@ export default class BoardController extends AbstractController {
 
     nextIndexRevert (data) {
         if (/^\d{1,11}$/.test(`${data.index}`)) {
-            this.events.emit('commit:reverted', parseInt(data.index, 10) + 1);
+            this.domEventManager.eventBus.emit('commit:reverted', parseInt(data.index, 10) + 1);
         }
     }
 
@@ -172,7 +173,7 @@ export default class BoardController extends AbstractController {
             this.setMessage({ text: `Delete data succeed.`, type: 'success' });
 
             if (this.dataType === 'category' || this.dataType === 'item' && !this.boardState.isCategoryView()) {
-                this.events.emit('commit:add', {
+                this.domEventManager.eventBus.emit('commit:add', {
                     action: 'delete',
                     type: this.dataType,
                     payload: {id},

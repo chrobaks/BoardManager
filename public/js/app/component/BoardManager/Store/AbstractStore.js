@@ -7,6 +7,7 @@ export default class AbstractStore {
         this.formType = formType;
         this.categoryItemMapStore = categoryItemMapStore;
         this.factory = new StoreFactory(formType);
+        this.objectCreatet = null;
     }
 
     all() {
@@ -14,15 +15,27 @@ export default class AbstractStore {
     }
 
     getById(id) {
-        return this.collection.find(c => c.id === id);
+        const result = this.getRawById(id);
+
+        return {...result};
+    }
+
+    getRawById(id) {
+        const result = this.collection.find(c => c.id === id);
+        if (!result) {
+            throw new Error(`ERROR:AbstractStore:getRawById object not found`);
+        }
+        return result;
     }
 
     add(obj) {
         try {
             const lengthBefore = this.collection.length;
             const collectionItem = this.factory.normalize(obj);
+            this.objectCreatet = null;
             if (Object.keys(collectionItem).length) {
                 this.collection.push(collectionItem);
+                this.objectCreatet = collectionItem;
             }
 
             return lengthBefore < this.collection.length;
@@ -53,7 +66,7 @@ export default class AbstractStore {
 
     update(update) {
         update = this.factory.normalize(update);
-        const data = this.getById(update.id);
+        const data = this.getRawById(update.id);
         if (!data) {
             throw new Error(`ERROR:AbstractStore Update failed: Item with id ${update.id} not found.`);
         }
@@ -83,5 +96,9 @@ export default class AbstractStore {
 
     notEmpty(collection) {
         return (Utils.collectionLength(collection) > 0);
+    }
+
+    getObjetCreatet() {
+        return this.objectCreatet;
     }
 }

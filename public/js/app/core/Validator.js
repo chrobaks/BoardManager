@@ -1,5 +1,5 @@
 export default class Validator {
-    static validate(data, schema) {
+    static validate(data, schema, mode = '') {
         const errors = [];
         try {
             for (const [field, rules] of Object.entries(schema)) {
@@ -8,13 +8,13 @@ export default class Validator {
                 const value = data[field];
 
                 for (const constraint of rules.constraints) {
-                    const isValid = this.checkRule(value, constraint);
+                    const isValid = this.checkRule(field, value, constraint, mode);
                     if (!isValid) {
                         errors.push({
                             field: field,
                             message: constraint.message || `Invalid value for ${field}`
                         });
-                        break; // Nur den ersten Fehler pro Feld anzeigen
+                        break;
                     }
                 }
             }
@@ -25,24 +25,28 @@ export default class Validator {
         return errors;
     }
 
-    static checkRule(value, constraint) {
+    static checkRule(field, value, constraint, mode) {
         const rule = constraint?.rule ?? null;
         const params = constraint?.params ?? null;
         if (!rule) return true;
+
+        if (mode !== 'update' && field === 'id' && (rule === 'required' || rule === 'range')) {
+            return true;
+        }
 
         switch (rule) {
             case 'required':
                 return value !== undefined && value !== null && value.toString().trim() !== '';
             case 'min_length':
-                if (!params || params && !params.value) return true;
+                if (!params || params.value == null) return true;
                 return String(value).length >= params.value;
             case 'max_length':
-                if (!params || params && !params.value) return true;
+                if (!params || params.value == null) return true;
                 return String(value).length <= params.value;
             case 'range':
+                if (!params || params.min == null || params.max == null) return true;
                 const val = Number(value);
-                if (!params || params && !params.min || params && !params.max) return true;
-                return val >= params.min && val <= params.max;
+                return !Number.isNaN(val) && val >= params.min && val <= params.max;
             default:
                 return true;
         }

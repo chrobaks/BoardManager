@@ -2,8 +2,8 @@ import BoardController from './BoardController.js';
 import ItemService from '../Service/ItemService.js';
 
 export default class ItemController extends BoardController {
-    constructor(store, view, eventBus, idService, boardState) {
-        super(store, view, eventBus, idService, boardState, 'item', ItemService);
+    constructor(store, view, domEventManager, idService, boardState) {
+        super(store, view, domEventManager, idService, boardState, 'item', ItemService);
 
         this.init([
             {action:'add'},

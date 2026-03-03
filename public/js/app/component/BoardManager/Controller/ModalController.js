@@ -1,56 +1,32 @@
-import FormRenderer from '../Service/FormRenderer.js';
-import Form from '../../../core/Form.js';
-import Validator from '../../../core/Validator.js';
+import ModalFormService from '../Service/ModalFormService.js';
 
 export default class ModalController {
-    constructor(modal, eventBus, formFactory) {
+    /**
+     * @param {ModalAdapter} modal
+     * @param {DomEventManager} domEventManager
+     * @param {FormFactory} formFactory
+     */
+    constructor(modal, domEventManager, formFactory) {
         this.modal = modal;
-        this.events = eventBus;
+        this.domEventManager = domEventManager;
         this.formFactory = formFactory;
+
+        this.modalFormService = new ModalFormService(this.domEventManager.eventBus, this.formFactory, this.modal);
     }
 
     init () {
-        this.events.on('modal:open:form', data => this.openForm(data));
-        this.events.on('modal:prompt:delete', data => this.openPromptDelete(data));
+        this.domEventManager.eventBus.on('modal:open:form', data => this.openForm(data));
+        this.domEventManager.eventBus.on('modal:prompt:delete', data => this.openPromptDelete(data));
     }
 
     openForm(obj = {}) {
-        if (obj?.type && obj?.payload) {
-            this.modal.setTitle(
-                obj.payload.id ? 'Edit data' : 'Create new data'
-            );
+        try {
+            const { title, html, onSubmit } = this.modalFormService.build(obj);
 
-            const formAction = obj.type + 'Form';
-            const form = this.formFactory[formAction](obj.payload);
-            const html = FormRenderer.render(form.dom, { selector: 'one-row-form' }, true);
-
-            this.modal.setContent(html, {
-                type: 'save',
-                onSubmit: () => {
-                    try {
-                        const formContainer = this.modal.getModalForm();
-                        const data = Form.serialize(formContainer);
-
-                        let errors = [];
-                        if (form.formType) {
-                            errors = Validator.validate(data, form.formType);
-                        }
-
-                        if (errors.length > 0) {
-                            Form.showErrors(formContainer, errors);
-                            return false;
-                        }
-
-                        this.events.emit(obj.payload.id ? obj.type + ':update' : obj.type + ':add', data);
-
-                        return true;
-                    } catch (e) {
-                        console.error('ERROR:ModalController:openForm', e);
-
-                        return false;
-                    }
-                }
-            });
+            this.modal.setTitle(title);
+            this.modal.setContent(html, {type: 'save', onSubmit});
+        } catch (e) {
+            console.error('ERROR:ModalController:openForm', e);
         }
     }
 
@@ -63,7 +39,7 @@ export default class ModalController {
                 {
                     type: 'prompt',
                     onSubmit: () => {
-                        this.events.emit(obj.type + ':remove', obj.payload?.id);
+                        this.domEventManager.eventBus.emit(obj.type + ':remove', obj.payload?.id);
                     }
                 }
             );

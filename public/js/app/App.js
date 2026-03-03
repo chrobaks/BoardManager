@@ -12,11 +12,10 @@ document.addEventListener('DOMContentLoaded',  async function () {
             obj:BoardManager,
             loadImport: true,
             dependencies: (container, importData) => [
-                container,                              // constructor arg 1
-                importData,                             // constructor arg 2
-                sharedModal,                            // constructor arg 3
-                sharedEventBus,                         // constructor arg 4
-                new DomEventManager(container, sharedEventBus) // constructor arg 5
+                container,
+                importData,
+                sharedModal,
+                new DomEventManager(container, sharedEventBus)
             ]
         }
     ];

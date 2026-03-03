@@ -47,14 +47,12 @@ export default class BoardManager {
      * @param {HTMLElement} container
      * @param {Object} importData
      * @param {ModalAdapter} modal
-     * @param {EventBus} eventBus
      * @param {DomEventManager} domEventManager
      */
-    constructor(container, importData, modal, eventBus, domEventManager) {
+    constructor(container, importData, modal, domEventManager) {
         this.container = container;
         this.importData = importData;
         this.modal = modal;
-        this.eventBus = eventBus;
         this.domEventManager = domEventManager;
 
         this.init();
@@ -151,7 +149,7 @@ export default class BoardManager {
         this.categoryController = new CategoryController(
             this.categoryStore,
             this.categoryView,
-            this.eventBus,
+            this.domEventManager,
             this.categoryIdService,
             this.boardState
         );
@@ -159,14 +157,14 @@ export default class BoardManager {
         this.itemController = new ItemController(
             this.itemStore,
             this.itemView,
-            this.eventBus,
+            this.domEventManager,
             this.itemIdService,
             this.boardState
         );
 
         this.modalController = new ModalController(
             this.modal,
-            this.eventBus,
+            this.domEventManager,
             this.formFactory
         );
 
@@ -175,7 +173,7 @@ export default class BoardManager {
             this.commitView,
             this.commitState,
             this.container,
-            this.eventBus
+            this.domEventManager
         );
 
         this.modalController.init();

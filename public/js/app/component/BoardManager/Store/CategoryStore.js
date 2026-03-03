@@ -44,14 +44,6 @@ export default class CategoryStore extends AbstractStore {
         }
     }
 
-    getRawById(id) {
-        const cat = super.getById(id);
-        if (!cat?.id) {
-            throw new Error(`ERROR:CategoryStore:getRawById category not found.`);
-        }
-        return cat;
-    }
-
     getById(id) {
         const cat = this.getRawById(id);
         if (!cat?.id) {

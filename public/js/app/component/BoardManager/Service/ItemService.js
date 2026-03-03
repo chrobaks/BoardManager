@@ -23,7 +23,7 @@ export default class ItemService extends BoardService {
 
     remove(id) {
         try {
-            this.events.emit('category:delete:item', {id: id});
+            this.domEventManager.eventBus.emit('category:delete:item', {id: id});
 
             if (this.boardState.isBoardView('category')) {
                 this.store.remove(id);

@@ -1,10 +1,10 @@
 import { BOARD_EVENT_ACTIONS } from '../BoardManager.js';
 
 export default class AbstractController {
-    constructor(store, view, eventBus, idService, boardState, dataType) {
+    constructor(store, view, domEventManager, idService, boardState, dataType) {
         this.store = store;
         this.view = view;
-        this.events = eventBus;
+        this.domEventManager = domEventManager;
         this.idService = idService;
         this.boardState = boardState;
         this.dataType = dataType;
@@ -16,8 +16,7 @@ export default class AbstractController {
         try {
             if (eventList.length) {
                 eventList.forEach(event => {
-                    let eventAct = `${this.dataType}:${event.action}`;
-
+                    let eventAct = this.domEventManager.eventIdentifier(this.dataType, event.action);
                     if(this.activeListenerExistsByEventAct(eventAct)) {
                         return;
                     }
@@ -26,7 +25,10 @@ export default class AbstractController {
 
                     if (!callback) {
                         if (event.eventName) {
-                            eventAct = `${event.eventName}:${eventAct}`;
+                            eventAct = this.domEventManager.eventIdentifier(event.eventName, eventAct);
+                            if(this.activeListenerExistsByEventAct(eventAct)) {
+                                return;
+                            }
                         }
                         const methodName = event.action.replace(/:([a-z])/g, (m) => m[1].toUpperCase());
                         if (typeof this[methodName] === 'function') {
@@ -36,7 +38,7 @@ export default class AbstractController {
                         }
                     }
 
-                    this.events.on(eventAct, callback);
+                    this.domEventManager.eventBus.on(eventAct, callback);
                     this._activeListeners.push({ eventAct, callback });
                 });
             }
@@ -51,8 +53,9 @@ export default class AbstractController {
         try {
             const eventActions = (this.dataType === 'commit') ? BOARD_EVENT_ACTIONS[this.dataType] : BOARD_EVENT_ACTIONS['board'];
             if (!eventActions) {return;}
+
             Object.values(eventActions).forEach(action => {
-                const eventAct = `click:${this.dataType}:${action}`;
+                const eventAct = this.domEventManager.eventIdentifier('click', [this.dataType, action]);
 
                 if(this.activeListenerExistsByEventAct(eventAct)) {
                     return;
@@ -62,7 +65,7 @@ export default class AbstractController {
 
                 if (typeof this[methodName] === 'function') {
                     const boundCallback = this[methodName].bind(this);
-                    this.events.on(eventAct, boundCallback);
+                    this.domEventManager.eventBus.on(eventAct, boundCallback);
                     this._activeListeners = this._activeListeners || [];
                     this._activeListeners.push({ eventAct, boundCallback });
                 } else {
@@ -80,13 +83,13 @@ export default class AbstractController {
 
     addBusListener(eventAct, callback) {
         const boundCallback = callback.bind(this);
-        this.events.on(eventAct, boundCallback);
+        this.domEventManager.eventBus.on(eventAct, boundCallback);
         this._activeListeners.push({ eventAct, boundCallback });
     }
 
     destroy() {
         this._activeListeners.forEach(({ eventAct, boundCallback }) => {
-            this.events.off(eventAct, boundCallback);
+            this.domEventManager.eventBus.off(eventAct, boundCallback);
         });
         this._activeListeners = [];
         if (this.view && typeof this.view.destroy === 'function') {
@@ -97,7 +100,10 @@ export default class AbstractController {
     setMessage(message, action = 'show') {
         try {
             const dataType = (message?.dataType ? message.dataType : this.dataType);
-            this.events.emit(`${dataType}:message:${action}`, message);
+            this.domEventManager.eventBus.emit(
+                this.domEventManager.eventIdentifier(dataType, ['message', action]),
+                message
+            );
         } catch (e) {
             console.error('ERROR:AbstractController:setMessage', e);
         }
