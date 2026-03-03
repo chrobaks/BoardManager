@@ -34,6 +34,43 @@ You can:
 
 ---
 
+## Testing
+
+This project uses **Vitest**, a blazing fast unit test framework built on Vite, to ensure code quality and reliability.
+
+### Quick Start
+
+```bash
+# Install dependencies
+npm install
+
+# Run all tests
+npm run test:run
+
+# Run tests in watch mode
+npm test
+
+# Open interactive UI dashboard
+npm run test:ui
+
+# Generate coverage report
+npm run test:coverage
+```
+
+### Test Files
+
+All unit tests are located in `public/js/app/__tests__/` and mirror the structure of the source code. Tests cover the core utility and helper modules used throughout the application.
+
+### Running Tests Locally
+
+- **Watch Mode:** `npm test` - Tests re-run automatically when files change
+- **Single Run:** `npm run test:run` - Runs all tests once and exits
+- **Interactive Dashboard:** `npm run test:ui` - Opens a visual test explorer in your browser
+- **Coverage Report:** `npm run test:coverage` - Generates an HTML coverage report
+
+For more information about Vitest, visit [vitest.dev](https://vitest.dev/).
+
+---
 
 ## Key Features
 
@@ -44,7 +81,9 @@ You can:
 - **State Management:** Centralized stores with data normalization and type safety.
 - **Responsive Design:** Integrated with Bootstrap 5.3.
 - **Commit System:** Flexible data persistence with support for both real-time updates and manual batch commits.
-
+- **Comprehensive Testing:** Unit tests for core modules using Vitest.
+- **Interactive UI Dashboard:** Visual test explorer for interactive testing.
+- **Code Coverage Report:** HTML coverage report for code coverage analysis.
 ---
 
 ## Data Persistence & Commit System
